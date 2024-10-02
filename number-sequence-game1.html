@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Number Sequence Game with Non-Zero Sequences</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .box {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #007bff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            background-color: white;
+        }
+        input {
+            width: 90px;
+            height: 90px;
+            font-size: 24px;
+            text-align: center;
+            border: none;
+        }
+        .line {
+            height: 2px;
+            background-color: #007bff;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            z-index: -1;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="line"></div>
+        <div class="box" id="box1"></div>
+        <div class="box" id="box2"></div>
+        <div class="box" id="box3"></div>
+        <div class="box" id="box4"></div>
+        <div class="box" id="box5"></div>
+    </div>
+    <div class="buttons">
+        <button id="newQuestion">重新出題</button>
+        <button id="checkAnswer">確定</button>
+    </div>
+    <div id="message"></div>
+
+    <script>
+        let currentInputPosition;
+
+        function generateSequence() {
+            let start, step, numbers;
+            do {
+                start = Math.floor(Math.random() * 899) + 100; // 100 to 998
+                let steps = [1, 10, 100];
+                step = steps[Math.floor(Math.random() * steps.length)];
+                let isIncreasing = Math.random() < 0.5; // 50% chance of increasing or decreasing
+
+                if (!isIncreasing) {
+                    step = -step;
+                }
+
+                numbers = [];
+                for (let i = 0; i < 5; i++) {
+                    let num = start + i * step;
+                    numbers.push(num);
+                }
+            } while (numbers.some(num => num <= 0 || num > 9999)); // Regenerate if any number is 0 or negative or > 9999
+
+            return numbers;
+        }
+
+        function setNumbers() {
+            let numbers = generateSequence();
+            currentInputPosition = Math.floor(Math.random() * 5) + 1; // Random position 1-5
+
+            for (let i = 1; i <= 5; i++) {
+                let box = document.getElementById('box' + i);
+                box.innerHTML = ''; // Clear previous content
+
+                if (i === currentInputPosition) {
+                    let input = document.createElement('input');
+                    input.type = 'text';
+                    input.id = 'userInput';
+                    input.maxLength = '4';
+                    input.setAttribute('data-correct', numbers[i-1]);
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            checkAnswer();
+                        }
+                    });
+                    box.appendChild(input);
+                } else {
+                    box.textContent = numbers[i-1];
+                }
+            }
+
+            document.getElementById('userInput').value = '';
+            document.getElementById('userInput').style.color = 'black';
+            document.getElementById('message').textContent = '';
+            document.getElementById('userInput').focus();
+        }
+
+        function checkAnswer() {
+            let input = document.getElementById('userInput');
+            let message = document.getElementById('message');
+            if (input.value === '') {
+                message.textContent = '請輸入答案';
+                message.style.color = 'blue';
+                input.focus();
+                return;
+            }
+            if (parseInt(input.value) === parseInt(input.getAttribute('data-correct'))) {
+                message.textContent = '正確！';
+                message.style.color = 'green';
+                setTimeout(setNumbers, 2000);
+            } else {
+                message.textContent = '不正確，請再試一次。';
+                message.style.color = 'red';
+                input.style.color = 'red';
+                input.focus();
+            }
+        }
+
+        window.onload = setNumbers;
+
+        document.getElementById('newQuestion').addEventListener('click', setNumbers);
+        document.getElementById('checkAnswer').addEventListener('click', checkAnswer);
+    </script>
+</body>
+</html>
