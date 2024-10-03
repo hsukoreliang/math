@@ -84,7 +84,8 @@
         function generateSequence() {
             let start, step, numbers;
             do {
-                start = Math.floor(Math.random() * 899) + 100; // 100 to 998
+                // start = Math.floor(Math.random() * 899) + 100; // 100 to 998
+                start =Math.floor(Math.random() * 8990) + 1000; // 1000 to 9980
                 let steps = [1, 10, 100];
                 step = steps[Math.floor(Math.random() * steps.length)];
                 let isIncreasing = Math.random() < 0.5; // 50% chance of increasing or decreasing
