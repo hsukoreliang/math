@@ -189,7 +189,10 @@
         for (let i = 0; i < inputs.length; i++) {
             if (inputs[i].value !== correctAnswer[i]) {
                 inputs[i].style.color = 'red'; // 將錯誤的輸入框文字設置為紅色
-            }
+            }else{
+ inputs[i].style.color = 'black'; // Reset text color to black
+
+}
         }
 
 
@@ -197,18 +200,26 @@
         }
 
         function newQuestion() {
-
- 
-
-            
             currentQuestion = generateQuestion();
             displayQuestion(currentQuestion);
             const inputs = document.querySelectorAll('.answer-inputs input');
             inputs.forEach(input => {
                 if (input.id !== 'input-thousands') {
                     input.value = '';
+
+
+ 		input.style.color = 'black'; // Reset text color to black
                 }
+
+
+
+
+
+
             });
+
+
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             document.getElementById('feedback').textContent = '';
         }
