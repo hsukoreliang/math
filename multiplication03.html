@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplication Practice with Drawing Area</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .game-container {
+            width: 80vw;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .drawing-container {
+            margin-bottom: 2px;
+        }
+        #drawingArea {
+            width: 100%;
+            height: 100px;
+            background-color: #ffcccc;
+            border: 2px solid red;
+        }
+        .multiplication-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 40px);
+            gap: 5px;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 36px;
+        }
+        .digit {
+            text-align: center;
+        }
+        .multiplication-line {
+            grid-column: 1 / -1;
+            border-bottom: 3px solid black;
+            margin: 10px 0;
+        }
+        .answer-inputs {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(4, 40px);
+            gap: 5px;
+            justify-content: center;
+        }
+        .answer-inputs input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 24px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        #feedback {
+            text-align: center;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="drawing-container">
+            <canvas id="drawingArea" width="600" height="100"></canvas>
+        </div>
+        <div class="multiplication-grid">
+            <div class="digit" id="thousands" style="visibility: hidden;"></div>
+            <div class="digit" id="hundreds"></div>
+            <div class="digit" id="tens"></div>
+            <div class="digit" id="ones"></div>
+            <div class="digit">×</div>
+            <div class="digit"></div>
+            <div class="digit"></div>
+            <div class="digit" id="multiplier"></div>
+            <div class="multiplication-line"></div>
+            <div class="answer-inputs">
+                <input type="text" maxlength="1" id="input-thousands">
+                <input type="text" maxlength="1" id="input-hundreds">
+                <input type="text" maxlength="1" id="input-tens">
+                <input type="text" maxlength="1" id="input-ones">
+            </div>
+        </div>
+        <div class="buttons">
+            <button onclick="checkAnswer()">確定</button>
+            <button onclick="newQuestion()">重新出題</button>
+        </div>
+        <div id="feedback"></div>
+    </div>
+
+    <script>
+        let currentQuestion = { multiplicand: 0, multiplier: 0 };
+
+        const canvas = document.getElementById('drawingArea');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        function generateQuestion() {
+            const multiplicand = Math.floor(Math.random() * 900) + 100; // 100 to 999
+            const multiplier = Math.floor(Math.random() * 9) + 1; // 1 to 9
+            return { multiplicand, multiplier };
+        }
+
+        function displayQuestion(question) {
+            document.getElementById('thousands').textContent = '';
+            document.getElementById('hundreds').textContent = Math.floor((question.multiplicand % 1000) / 100);
+            document.getElementById('tens').textContent = Math.floor((question.multiplicand % 100) / 10);
+            document.getElementById('ones').textContent = question.multiplicand % 10;
+            document.getElementById('multiplier').textContent = question.multiplier;
+
+            const product = question.multiplicand * question.multiplier;
+            const inputThousands = document.getElementById('input-thousands');
+            if (product < 1000) {
+                inputThousands.style.visibility = 'hidden';
+                inputThousands.value = '0';
+            } else {
+                inputThousands.style.visibility = 'visible';
+                inputThousands.value = '';
+            }
+
+            // Focus on the rightmost visible input
+            document.getElementById('input-ones').focus();
+        }
+
+        function checkAnswer() {
+            const inputs = document.querySelectorAll('.answer-inputs input');
+            const answer = Array.from(inputs).map(input => input.value).join('');
+            const correctAnswer = (currentQuestion.multiplicand * currentQuestion.multiplier).toString().padStart(4, '0');
+            const feedback = document.getElementById('feedback');
+            
+            if (answer === correctAnswer) {
+                feedback.textContent = '正確！';
+                setTimeout(() => {
+                    newQuestion();
+                }, 2000);
+            } else {
+                feedback.textContent = '不正確，請再試一次。';
+
+
+        // 標記錯誤的輸入框
+        for (let i = 0; i < inputs.length; i++) {
+            if (inputs[i].value !== correctAnswer[i]) {
+                inputs[i].style.color = 'red'; // 將錯誤的輸入框文字設置為紅色
+            }
+        }
+
+
+            }
+        }
+
+        function newQuestion() {
+            currentQuestion = generateQuestion();
+            displayQuestion(currentQuestion);
+            const inputs = document.querySelectorAll('.answer-inputs input');
+            inputs.forEach(input => {
+                if (input.id !== 'input-thousands') {
+                    input.value = '';
+                }
+            });
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            document.getElementById('feedback').textContent = '';
+        }
+
+        // Add event listeners for auto-focus
+        document.querySelectorAll('.answer-inputs input').forEach((input, index, inputs) => {
+            input.addEventListener('input', () => {
+                if (input.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        // Initialize with a question when the page loads
+        newQuestion();
+    </script>
+</body>
+</html>
