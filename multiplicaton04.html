@@ -141,16 +141,21 @@
         }
 
         function getCoordinates(e) {
-            let x, y;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+
             if (e.type.includes('mouse')) {
-                x = e.offsetX;
-                y = e.offsetY;
+                return [
+                    (e.clientX - rect.left) * scaleX,
+                    (e.clientY - rect.top) * scaleY
+                ];
             } else {
-                const rect = canvas.getBoundingClientRect();
-                x = e.touches[0].clientX - rect.left;
-                y = e.touches[0].clientY - rect.top;
+                return [
+                    (e.touches[0].clientX - rect.left) * scaleX,
+                    (e.touches[0].clientY - rect.top) * scaleY
+                ];
             }
-            return [x, y];
         }
 
         canvas.addEventListener('mousedown', startDrawing);
