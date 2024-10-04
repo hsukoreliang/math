@@ -83,7 +83,7 @@
 <body>
     <div class="game-container">
         <div class="drawing-container">
-            <canvas id="drawingArea" width="600" height="100"></canvas>
+            <canvas id="drawingArea"></canvas>
         </div>
         <div class="multiplication-grid">
             <div class="digit" id="thousands" style="visibility: hidden;"></div>
@@ -118,6 +118,18 @@
         let lastX = 0;
         let lastY = 0;
 
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth * window.devicePixelRatio;
+            canvas.height = 100 * window.devicePixelRatio;
+            canvas.style.width = container.clientWidth + 'px';
+            canvas.style.height = '100px';
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
         function startDrawing(e) {
             isDrawing = true;
             [lastX, lastY] = getCoordinates(e);
@@ -147,13 +159,13 @@
 
             if (e.type.includes('mouse')) {
                 return [
-                    (e.clientX - rect.left) * scaleX,
-                    (e.clientY - rect.top) * scaleY
+                    (e.clientX - rect.left) * (canvas.width / rect.width),
+                    (e.clientY - rect.top) * (canvas.height / rect.height)
                 ];
             } else {
                 return [
-                    (e.touches[0].clientX - rect.left) * scaleX,
-                    (e.touches[0].clientY - rect.top) * scaleY
+                    (e.touches[0].clientX - rect.left) * (canvas.width / rect.width),
+                    (e.touches[0].clientY - rect.top) * (canvas.height / rect.height)
                 ];
             }
         }
