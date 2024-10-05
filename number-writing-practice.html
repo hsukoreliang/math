@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>數字書寫練習</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        .number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .report {
+            margin-top: 20px;
+            text-align: left;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .wrong-answer {
+            margin-top: 10px;
+        }
+        .wrong-attempts {
+            margin-left: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="questionNumber" class="question-number"></div>
+        <div id="questionDisplay" class="number"></div>
+        <input type="text" id="userInput" placeholder="輸入數字">
+        <div class="button-container">
+            <button onclick="checkAnswer()">確定</button>
+            <button onclick="generateNumber2()">重新出題</button>
+        </div>
+        <div id="message" class="message"></div>
+        <div id="report" class="report"></div>
+    </div>
+
+    <script>
+        let currentNumber; 
+        let questionCount = 0; 
+        let correctCount = 0; 
+        let wrongAnswers = new Map(); 
+        let hasAnsweredCorrectly = false; // 新增變數來追蹤是否已經答對
+        let correctAfterWrongCount = 0; // 新增變數來追蹤再次修改答對的題數
+        var updateTime=0;
+        var pressGenerateNumber=0;
+
+ function generateNumber2() {
+	pressGenerateNumber++;
+	generateNumber();
+
+	questionCount=questionCount-pressGenerateNumber;
+	pressGenerateNumber=pressGenerateNumber-1;
+	document.getElementById('questionNumber').textContent = `第${questionCount}題：`;
+
+
+}
+        function generateNumber() {
+	    updateTime=0;
+             // 每次生成新題目時重置 hasAnsweredCorrectly
+             hasAnsweredCorrectly = false; 
+
+             // 題號增加
+             questionCount++;
+
+             do {
+                 currentNumber = Math.floor(Math.random() * 10000);
+             } while (!currentNumber.toString().includes('0'));
+             
+             const chineseNumber = numberToChinese(currentNumber);
+             
+             document.getElementById('questionNumber').textContent = `第${questionCount}題：`;
+             document.getElementById('questionDisplay').textContent = `「${chineseNumber}」記成？`;
+             
+             document.getElementById('userInput').value = '';
+             document.getElementById('message').textContent = '';
+         }
+
+         function numberToChinese(num) {
+             const units = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+             const positions = ['', '十', '百', '千', '萬'];
+             
+             let result = '';
+             let numStr = num.toString();
+             
+             for (let i = 0; i < numStr.length; i++) {
+                 let digit = parseInt(numStr[i]);
+                 if (digit !== 0) {
+                     result += units[digit] + positions[numStr.length - i - 1];
+                 } else {
+                     if (result.slice(-1) !== '零' && i !== numStr.length - 1) {
+                         result += '零';
+                     }
+                 }
+             }
+             
+             result = result.replace('一十', '十');
+             
+             return result;
+         }
+
+         function checkAnswer() {
+            // window.alert(currentNumber);
+            updateTime++;
+           if(updateTime>1){
+			//window.alert(updateTime);
+
+	    }
+
+             const userInput = document.getElementById('userInput').value; 
+             
+             const messageElement = document.getElementById('message');
+             
+             if (userInput === currentNumber.toString()) {
+                 if (!hasAnsweredCorrectly && updateTime<2) { // 第一次答對才計入正確數
+                     correctCount++;
+                     hasAnsweredCorrectly = true; // 設置為已答對
+                 } else if (hasAnsweredCorrectly === false) { // 如果之前答錯，則不計入再次修改答對的次數
+                     // 不做任何事情，因為這個情況不應該增加計數
+                 } else { // 用戶在第一次錯誤後正確回答
+                    // correctAfterWrongCount++;
+                 }
+
+                 if(updateTime>1){
+			correctAfterWrongCount++;
+                 }
+
+                 messageElement.textContent = '正確！';
+                 messageElement.style.color = 'green';
+                 setTimeout(generateNumber, 2000);
+                 
+              } else {
+                 messageElement.textContent = '不正確，請再試一次。';
+                 messageElement.style.color = 'red';
+                 
+                 // 每次答錯都計入錯誤次數
+                 if (!wrongAnswers.has(currentNumber)) {
+                     wrongAnswers.set(currentNumber, {
+                         chinese: numberToChinese(currentNumber),
+                         correct: currentNumber,
+                         attempts: []
+                     });
+                 }
+                 
+                 wrongAnswers.get(currentNumber).attempts.push(userInput);
+              }
+              updateReport();
+          }
+
+          function updateReport() {
+              const reportElement = document.getElementById('report');
+              const wrongCount = wrongAnswers.size;
+
+              reportElement.innerHTML = `
+                  ※ 共作答${questionCount}題，答對${correctCount}題，答錯${wrongCount}題。<br>
+                  ※ 再次修改而答對的題數：${correctAfterWrongCount}。
+                  ${wrongCount > 0 ? '<br>※ 答錯題型如下：' : ''}
+                  ${Array.from(wrongAnswers.values()).map(wrong => `
+                      <div class="wrong-answer">
+                          <strong>${wrong.chinese}</strong>=>
+                          ${wrong.attempts.map(attempt => `
+                              <span class="wrong-attempts">${attempt}</span>
+                          `).join(', ')}
+                      </div>
+                  `).join('')}
+              `;
+          }
+
+          // 初始化
+          generateNumber();
+      </script>
+</body>
+</html>
