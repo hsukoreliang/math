@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>退位减法練習器</title>
+    <style>
+        body {
+            font-family: monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .problem {
+            font-size: 36px; /* 放大1.5倍 */
+            text-align: right;
+        }
+        .line {
+            width: 100%;
+            height: 3px; /* 放大1.5倍 */
+            background-color: blue;
+            margin: 15px 0; /* 放大1.5倍 */
+        }
+        button {
+            margin-top: 30px; /* 放大1.5倍 */
+            padding: 15px 30px; /* 放大1.5倍 */
+            font-size: 24px; /* 放大1.5倍 */
+        }
+        .number-container {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .digit {
+            width: 45px; /* 放大1.5倍 */
+            text-align: center;
+            font-size: 36px; /* 放大1.5倍 */
+        }
+        .input-container {
+            display: flex;
+            justify-content: flex-end;
+        }
+        input {
+            width: 45px; /* 放大1.5倍 */
+            height: 45px; /* 放大1.5倍 */
+            font-size: 36px; /* 放大1.5倍 */
+            text-align: center;
+            margin: 0;
+            border: 2px solid black; /* 增加邊框厚度以匹配放大效果 */
+            box-sizing: border-box;
+        }
+        .incorrect {
+            color: red;
+        }
+        #message {
+            margin-top: 15px; /* 放大1.5倍 */
+            font-weight: bold;
+            font-size: 24px; /* 放大1.5倍 */
+        }
+        #history {
+            position: absolute; /* 絕對定位以便於放置在左側 */
+            left: 1cm; /* 往左移動2公分，原本是3公分，現在改為1公分 */
+            top: 20%; /* 調整距離頂部的距離 */
+            max-height: 80%; /* 最大高度，以避免溢出視窗 */
+            overflow-y: auto; /* 當內容超過最大高度時顯示滾動條 */
+            background-color: rgba(255, 255, 255, 0.8); /* 背景顏色稍微透明 */
+            padding: 10px; /* 增加內邊距以美觀 */
+            border-radius: 5px; /* 圓角邊框 */
+            box-shadow: 0 0 10px rgba(0,0,0,0.2); /* 陰影效果 */
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="problem" id="problem"></div>
+        <button onclick="generateProblem()">重新出题</button>
+        <button onclick="checkAnswer()">确定</button>
+        <div id="message"></div>
+    </div>
+    <div id="history"></div> <!-- 新增歷史紀錄區域 -->
+    <script>
+        let correctAnswer;
+        let currentProblem;
+        let questionCount = 0; // 題號計數器
+        let problemHistory = {}; // 用來追蹤已出現的題目及其題號
+
+        function generateProblem() {
+            const minuend = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000; // 隨機生成四位數
+           
+           // 隨機生成一個有二次退位的減數
+           let subtrahend = Math.floor(Math.random() * (minuend / 10)); // 確保減數小於被減數的一半
+           // 確保減數有兩個或更多位數
+           if (subtrahend < 10) subtrahend += 10;
+
+           correctAnswer = minuend - subtrahend;
+
+           // 記錄當前題目
+           currentProblem = `${minuend} - ${subtrahend}`;
+
+           // 檢查該題目是否已經出現過
+           if (!problemHistory[currentProblem]) {
+               questionCount++; // 新題目，增加題號
+               problemHistory[currentProblem] = questionCount; // 記錄題目及其對應的題號
+           }
+
+           const problemDiv = document.getElementById('problem');
+           
+           const minuendDigits = minuend.toString().split('').map(d => `<div class="digit">${d}</div>`).join('');
+           const subtrahendDigits = subtrahend.toString().padStart(minuend.toString().length, ' ').split('').map(d => `<div class="digit">${d === ' ' ? '&nbsp;' : d}</div>`).join('');
+           
+           const inputBoxes = Array(minuend.toString().length)
+               .fill()
+               .map((_, i) => `<input type="text" maxlength="1" id="answer${i}">`)
+               .join('');
+
+           problemDiv.innerHTML = `
+               <div class="number-container">${minuendDigits}</div>
+               <div class="number-container">- ${subtrahendDigits}</div>
+               <div class="line"></div>
+               <div class="input-container">${inputBoxes}</div>
+           `;
+            
+             document.getElementById('message').textContent = '';
+             
+             // 將焦點放在最右邊的輸入框
+             focusNextInput(minuend.toString().length - 1);
+             
+             // 為每個輸入框添加事件監聽器
+             for (let i = minuend.toString().length - 1; i >= 0; i--) {
+                 const inputField = document.getElementById(`answer${i}`);
+                 inputField.addEventListener('input', function() {
+                     if (this.value) { // 當輸入框有值時
+                         focusNextInput(i - 1); // 聚焦到左邊的輸入框
+                     }
+                 });
+             }
+         }
+
+         function focusNextInput(index) {
+             const nextInput = document.getElementById(`answer${index}`);
+             if (nextInput) {
+                 nextInput.focus(); // 聚焦到指定的輸入框
+             }
+         }
+
+         function checkAnswer() {
+             const userAnswer = Array.from(document.querySelectorAll('input'))
+                 .map(input => input.value)
+                 .join('');
+             
+             // 紀錄作答歷史，無論答案是否正確都記錄
+             recordHistory(userAnswer);
+             
+             if (parseInt(userAnswer) === correctAnswer) {
+                 document.getElementById('message').textContent = '正确！';
+                 document.querySelectorAll('input').forEach(input => input.classList.remove('incorrect'));
+                 
+                 // 正確答案後，2秒後自動生成新題目
+                 setTimeout(generateProblem, 2000);
+                 
+             } else {
+                 document.getElementById('message').textContent = '';
+                 const correctDigits = correctAnswer.toString().padStart(4, '0');
+                 document.querySelectorAll('input').forEach((input, index) => {
+                     if (input.value !== correctDigits[index]) {
+                         input.classList.add('incorrect');
+                     } else {
+                         input.classList.remove('incorrect');
+                     }
+                 });
+             }
+         }
+
+         function recordHistory(userAnswer) {
+             const historyDiv = document.getElementById('history');
+             const newEntry = document.createElement('div');
+             
+             // 判斷答案是否正確並建立紀錄內容
+             const isCorrect = parseInt(userAnswer) === correctAnswer;
+
+             newEntry.innerHTML = `${problemHistory[currentProblem]}. 題目：${currentProblem}（${isCorrect ? "正確" : "錯誤"}：使用者填：${userAnswer}）`;
+             
+             historyDiv.appendChild(newEntry);
+         }
+
+         // 初始生成一个问题
+         generateProblem();
+     </script>
+</body>
+</html>
