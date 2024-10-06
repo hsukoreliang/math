@@ -14,21 +14,21 @@
             display: inline-block;
             padding: 20px;
             border: 2px solid #333;
-            border-radius: 30px; /* 圓弧狀方框 */
-            font-size: 24px; /* 增加字體大小 */
-            margin-bottom: 20px; /* 題目與輸入框之間的距離 */
-            text-align: left; /* 將文字對齊設為左邊 */
+            border-radius: 30px;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: left;
         }
         #answer {
             width: 200px;
             padding: 10px;
-            font-size: 18px; /* 增加字體大小 */
-            border-radius: 5px; /* 正常型態的邊框圓角 */
-            border: 1px solid #ccc; /* 正常型態的邊框 */
+            font-size: 18px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
         #input-container {
             display: inline-block;
-            margin-top: 10px; /* 輸入框與題目之間的距離 */
+            margin-top: 10px;
         }
         button {
             padding: 10px 15px;
@@ -36,83 +36,143 @@
             cursor: pointer;
         }
         .error {
-            color: red; /* 錯誤訊息顏色 */
+            color: red;
+        }
+        #report-container {
+            margin-top: 30px;
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
         }
     </style>
 </head>
 <body>
-
     <h1>請解答以下數學題目</h1>
     
     <div id="question-container">
-        <p id="question">第1題：<br>5個千、0個百、0個十和3個一，合起來是多少？</p>
+        <p id="question">第1題：<br>5個千、0個百、0個十、3個一，合起來是多少？</p>
         
         <div id="input-container">
             <input type="text" id="answer" placeholder="請輸入你的答案">
         </div>
     </div>
-
     <div>
         <button onclick="checkAnswer()">確定</button>
-        <button onclick="generateQuestion()">重新出題</button>
+        <button onclick="generateQuestion(true)">重新出題</button>
     </div>
     
     <p id="result" class="error"></p>
 
+    <div id="report-container">
+        <h2>錯題分析報告</h2>
+        <p id="total-questions"></p>
+        <p id="correct-answers"></p>
+        <p id="incorrect-answers"></p>
+        <div id="error-section" style="display: none;">
+            <h3>錯誤題型：</h3>
+            <ul id="error-list"></ul>
+        </div>
+    </div>
+
     <script>
         let correctAnswer;
         let questionNumber = 1;
+        let totalQuestions = 0;
+        let directCorrectAnswers = 0;
+        let incorrectAnswers = 0;
+        let errorList = [];
+        let currentQuestion = '';
+        let isRetry = false;
+        let hasStarted = false;
 
-        function generateQuestion() {
-            // 隨機生成題目
-            const thousands = Math.floor(Math.random() * 6); // 0-5千
-            const hundreds = Math.floor(Math.random() * 4); // 0-3百
-            const tens = Math.floor(Math.random() * 3); // 0-2十
-            const ones = Math.floor(Math.random() * 6); // 0-5一
-
-            correctAnswer = thousands * 1000 + hundreds * 100 + tens * 10 + ones;
-
-            let questionText = `第${questionNumber++}題：<br>`;
-            
-            // 根據生成的數字組合問題文本
-            if (thousands > 0) questionText += `${thousands}個千、`;
-            if (hundreds > 0) questionText += `${hundreds}個百`;
-            
-            // 處理十和一的情況
-            if (tens > 0) {
-                questionText += `${hundreds > 0 ? '、' : ''}${tens}個十`;
-                if (ones > 0) questionText += `和${ones}個一`;
-            } else if (ones > 0) {
-                questionText += `和${ones}個一`;
+        function generateQuestion(isNewQuestion = false) {
+            if (!isRetry || isNewQuestion) {
+                const thousands = Math.floor(Math.random() * 6);
+                const hundreds = Math.floor(Math.random() * 4);
+                const tens = Math.floor(Math.random() * 3);
+                const ones = Math.floor(Math.random() * 6);
+                correctAnswer = thousands * 1000 + hundreds * 100 + tens * 10 + ones;
+                let questionText = `第${questionNumber}題：<br>`;
+                
+                let parts = [];
+                if (thousands > 0) parts.push(`${thousands}個千`);
+                if (hundreds > 0) parts.push(`${hundreds}個百`);
+                if (tens > 0) parts.push(`${tens}個十`);
+                if (ones > 0) parts.push(`${ones}個一`);
+                
+                questionText += parts.join('、');
+                questionText += `，合起來是多少？`;
+                document.getElementById("question").innerHTML = questionText.trim();
+                currentQuestion = questionText.trim();
+                
+                if (isNewQuestion) {
+                    totalQuestions++;
+                    isRetry = false;
+                }
             }
-
-            questionText += `，合起來是多少？`;
-
-            document.getElementById("question").innerHTML = questionText.trim();
                 
             document.getElementById("result").innerText = "";
-            document.getElementById("answer").value = ""; // 清空輸入欄位
-            document.getElementById("answer").style.backgroundColor = ""; // 重置背景顏色
-            document.getElementById("answer").focus(); // 聚焦到輸入框
+            document.getElementById("answer").value = "";
+            document.getElementById("answer").style.backgroundColor = "";
+            document.getElementById("answer").focus();
         }
 
         function checkAnswer() {
             const userAnswer = parseInt(document.getElementById("answer").value);
             
+            if (!hasStarted) {
+                hasStarted = true;
+                document.getElementById("report-container").style.display = "block";
+            }
+            
             if (userAnswer === correctAnswer) {
                 document.getElementById("result").innerText = "恭喜你，答案正確！";
-                setTimeout(generateQuestion, 2000); // 等待2秒後重新出題
+                if (!isRetry) {
+                    directCorrectAnswers++;
+                }
+                isRetry = false;
+                questionNumber++;
+                setTimeout(() => generateQuestion(true), 2000);
             } else {
-                document.getElementById("result").innerText = "很遺憾，答案錯誤！";
-                document.getElementById("answer").style.backgroundColor = "red"; // 將背景改為紅色
-                document.getElementById("answer").focus(); // 聚焦到輸入框
+                document.getElementById("result").innerText = "很遺憾，答案錯誤！請重試。";
+                document.getElementById("answer").style.backgroundColor = "red";
+                document.getElementById("answer").focus();
+                if (!isRetry) {
+                    incorrectAnswers++;
+                }
+                errorList.push(`${currentQuestion.replace('<br>', ' ')} ==> ${userAnswer}`);
+                isRetry = true;
+            }
+
+            updateReport();
+        }
+
+        function updateReport() {
+            document.getElementById("total-questions").innerText = 
+                `共做${totalQuestions}題：答對${directCorrectAnswers}題，錯${incorrectAnswers}題。`;
+            document.getElementById("correct-answers").innerText = 
+                `直接答對的題數：${directCorrectAnswers}。`;
+            document.getElementById("incorrect-answers").innerText = 
+                `答錯的題數：${incorrectAnswers}。`;
+            
+            const errorSection = document.getElementById("error-section");
+            const errorListElement = document.getElementById("error-list");
+            if (errorList.length > 0) {
+                errorSection.style.display = "block";
+                errorListElement.innerHTML = '';
+                errorList.forEach(error => {
+                    const li = document.createElement('li');
+                    li.textContent = error;
+                    errorListElement.appendChild(li);
+                });
+            } else {
+                errorSection.style.display = "none";
             }
         }
 
-        // 頁面載入時生成第一道題目
         window.onload = generateQuestion;
-
     </script>
-
 </body>
 </html>
