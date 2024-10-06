@@ -142,9 +142,6 @@
              for (let i = 0; i < numStr.length; i++) {
                  let digit = parseInt(numStr[i]);
                  if (digit !== 0) {
-                   if(positions[numStr.length - i - 1]=='十' ){
-                     alert(digit);
-		   }
 			 
                     if(digit==1 && positions[numStr.length - i - 1]=='十' ){
 			   alert(digit+'  '+ positions[numStr.length - i - 1]);
@@ -161,7 +158,7 @@
                  }
              }
              
-             result = result.replace('一十', '十');
+             //result = result.replace('一十', '十');
              
              return result;
          }
