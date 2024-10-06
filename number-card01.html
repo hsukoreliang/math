@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>數字卡排列問題</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        p {
+            margin-bottom: 20px;
+        }
+        .number-card {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            border: 2px solid black;
+            margin-right: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+        input {
+            width: 50px;
+            height: 40px;
+            text-align: center;
+            font-size: 18px;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+        }
+        input:focus {
+            border-color: #00f;
+            outline: none;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #result-message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .correct {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .incorrect {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        .problem-statement {
+            font-size: 18px; /* Increased font size */
+        }
+        .highlight {
+            color: red; /* Set text color to red */
+            font-weight: bold; /* Make text bold */
+        }
+    </style>
+</head>
+<body>
+    <h1>數字卡排列問題（一）</h1>
+    
+    <p id="problem-statement" class="problem-statement"></p>
+    <div id="number-cards"></div>
+    
+    <table>
+        <tr>
+           <th>千位</th>
+           <th>百位</th>
+           <th>十位</th>
+           <th>個位</th>
+        </tr>
+        <tr id="digit-row">
+           <td><input type="text" maxlength="1" class="digit-input" id="thousands-input"></td>
+           <td><input type="text" maxlength="1" class="digit-input" id="hundreds-input"></td>
+           <td><input type="text" maxlength="1" class="digit-input" id="tens-input"></td>
+           <td><input type="text" maxlength="1" class="digit-input" id="ones-input"></td>
+        </tr>
+    </table>
+
+    <div class="button-container">
+        <button id="confirm-button">確定</button>
+        <button id="new-problem-button">重新出題</button>
+    </div>
+
+    <div id="result-message"></div>
+
+    <script>
+       let correctAnswer = '';
+       let isMaxQuestion = false;
+
+       // Initialize question number
+       let questionNumber = 1;
+
+       function generateNumbers() {
+           const numbers = new Set();
+
+           // Ensure the first digit (千位) is not zero
+           numbers.add(Math.floor(Math.random() * 9) + 1); // First digit (千位) from 1-9
+
+           while (numbers.size < 4) {
+               numbers.add(Math.floor(Math.random() * 10)); // Remaining digits can be from 0-9
+           }
+
+           return Array.from(numbers);
+       }
+
+       function displayNumbers(numbers) {
+           const cardsDiv = document.getElementById('number-cards');
+           cardsDiv.innerHTML = numbers.map(num => `<div class="number-card">${num}</div>`).join('');
+           
+           correctAnswer = numbers.join(''); // Combine all numbers for the answer
+       }
+
+       function clearInputs() {
+           const inputs = document.querySelectorAll('.digit-input');
+           inputs.forEach(input => input.value = '');
+       }
+
+       function generateNewProblem(incrementQuestionNumber = true) {
+           const numbers = generateNumbers();
+           displayNumbers(numbers);
+           
+           const problemStatement = document.getElementById('problem-statement');
+
+           isMaxQuestion = Math.random() >= 0.5;
+
+           if (isMaxQuestion) {
+               problemStatement.innerHTML = `第${incrementQuestionNumber ? questionNumber++ : questionNumber}題：<br>用 ${numbers.join(', ')} 這四張數字卡可以排列出很多四位數。<br>這些四位數中最<span class="highlight">「大」</span>的是多少？`;
+           } else {
+               problemStatement.innerHTML = `第${incrementQuestionNumber ? questionNumber++ : questionNumber}題：<br>用 ${numbers.join(', ')} 這四張數字卡可以排列出很多四位數。<br>這些四位數中最<span class="highlight">「小」</span>的是多少？`;
+           }
+
+           clearInputs(); // Clear inputs when generating a new problem
+           document.querySelector('.digit-input').focus();
+           
+           // 清除結果訊息
+           document.getElementById('result-message').innerHTML = '';
+           document.getElementById('result-message').className = '';
+       }
+
+       document.addEventListener('input', function(e) {
+           if (e.target.classList.contains('digit-input')) {
+               if (e.target.value.length === e.target.maxLength) {
+                   const inputs = document.querySelectorAll('.digit-input');
+                   const index = Array.from(inputs).indexOf(e.target);
+                   if (index < inputs.length - 1) {
+                       inputs[index + 1].focus();
+                   }
+               }
+           }
+       });
+
+       document.getElementById('confirm-button').addEventListener('click', function() {
+           const userInput = Array.from(document.querySelectorAll('.digit-input'))
+               .map(input => input.value)
+               .join('');
+
+           let expectedAnswer;
+
+           // Determine expected answer based on user selection
+           if (isMaxQuestion) {
+               expectedAnswer = correctAnswer.split('').sort((a, b) => b - a).join('');
+           } else {
+               expectedAnswer = correctAnswer.split('').sort((a, b) => a - b).join('');
+           }
+
+           const resultMessage = document.getElementById('result-message');
+           
+           if (userInput === expectedAnswer) {
+               resultMessage.innerHTML = "恭喜你，答案正確！";
+               resultMessage.className = 'correct';
+               clearInputs(); // Clear inputs after a correct answer
+               // 2秒後自動重新出題
+               setTimeout(() => generateNewProblem(), 2000);
+           } else {
+               resultMessage.innerHTML = `很遺憾，答案錯誤！正確答案是 ${expectedAnswer}`;
+               resultMessage.className = 'incorrect';
+           }
+       });
+
+       document.getElementById('new-problem-button').addEventListener('click', function() {
+          generateNewProblem(false); // Do not increment question number
+       });
+
+       generateNewProblem();
+   </script>
+</body>
+</html>
