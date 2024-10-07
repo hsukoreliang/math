@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>九九乘法練習</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-size: 20px;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            min-width: 400px;
+            display: flex;
+            flex-direction: column;
+            min-height: 80vh;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+        .question-line {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 48px;
+        }
+        input {
+            width: 100px;
+            font-size: 48px;
+            margin: 0 10px;
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            padding: 5px;
+        }
+        button {
+            font-size: 24px;
+            margin-top: 20px;
+            padding: 10px 30px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #question {
+            font-size: 48px;
+        }
+        #result {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        #timer {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        #error-report {
+            margin-top: auto;
+            text-align: left;
+            font-size: 18px;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>九九乘法練習</h1>
+        <div class="question-line">
+            <div id="question"></div>
+            <input type="text" id="answer" maxlength="2" autocomplete="off">
+        </div>
+        <button onclick="checkAnswer()">確定</button>
+        <div id="timer"></div>
+        <div id="result"></div>
+        <div id="error-report"></div>
+    </div>
+
+    <script>
+        let multiplicand, multiplier, startTime, totalStartTime;
+        let questionCount = 0;
+        let multipliers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        let correctCount = 0, incorrectCount = 0;
+        let errorList = [];
+        let currentRound = 9;  // Start with 9's multiplication table
+        let allRoundsErrors = [];  // Array to store errors from all rounds
+
+        function generateQuestion() {
+            if (questionCount === 0) {
+                multipliers = [1, 2, 3, 4, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5);
+                correctCount = 0;
+                incorrectCount = 0;
+                errorList = [];
+                totalStartTime = new Date();
+
+                if (currentRound === 9) {
+                    multiplicand = 9;
+                } else {
+                    multiplicand = Math.floor(Math.random() * 7) + 2;  // Random number from 2 to 8
+                }
+
+                // Hide the "Next Round" button if it exists
+                const nextRoundButton = document.getElementById('nextRoundButton');
+                if (nextRoundButton) {
+                    nextRoundButton.style.display = 'none';
+                }
+            }
+
+            if (questionCount < 9) {
+                multiplier = multipliers[questionCount];
+                questionCount++;
+            } else {
+                // Reset for next round
+                questionCount = 0;
+                if (currentRound === 9) {
+                    currentRound = 0;  // Move to random multiplicand rounds
+                } else {
+                    currentRound++;
+                }
+                generateQuestion();
+                return;
+            }
+            
+            document.getElementById('question').innerText = `${multiplicand}×${multiplier}=`;
+            document.getElementById('answer').value = '';
+            document.getElementById('result').innerText = '';
+            document.getElementById('answer').focus();
+            startTime = new Date();
+            updateTimer();
+        }
+
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answer').value);
+            const correctAnswer = multiplicand * multiplier;
+            const resultElement = document.getElementById('result');
+
+            if (userAnswer === correctAnswer) {
+                resultElement.innerText = '正確!';
+                resultElement.style.color = 'green';
+                correctCount++;
+            } else {
+                resultElement.innerText = `錯誤! 正確答案是 ${correctAnswer}`;
+                resultElement.style.color = 'red';
+                incorrectCount++;
+                errorList.push(`${multiplicand}×${multiplier}=${userAnswer}`);
+            }
+
+            if (questionCount === 9) {
+                showErrorReport();
+            } else {
+                setTimeout(generateQuestion, 1000);
+            }
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startTime;
+            const minutes = Math.floor(diff / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            document.getElementById('timer').innerText = 
+                `時間: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            requestAnimationFrame(updateTimer);
+        }
+
+        function showErrorReport() {
+            const now = new Date();
+            const totalTime = now - totalStartTime;
+            const minutes = Math.floor(totalTime / 60000);
+            const seconds = Math.floor((totalTime % 60000) / 1000);
+            
+            let currentReport = `本輪錯題分析報告：
+被乘數${multiplicand}，答對${correctCount}題，答錯${incorrectCount}題，共花了多少時間： ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}。
+答錯題型：${errorList.join(', ')}`;
+
+            // Add current round's errors to allRoundsErrors
+            allRoundsErrors.push({
+                multiplicand: multiplicand,
+                errors: errorList,
+                correctCount: correctCount,
+                incorrectCount: incorrectCount,
+                time: `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+            });
+
+            let allReports = allRoundsErrors.map((round, index) => 
+                `第${9 - index}輪錯題分析報告：
+被乘數${round.multiplicand}，答對${round.correctCount}題，答錯${round.incorrectCount}題，共花了多少時間： ${round.time}。
+答錯題型：${round.errors.join(', ')}`
+            ).join('\n\n');
+
+            document.getElementById('error-report').textContent = currentReport + '\n\n' + allReports;
+            
+            // Add a button to start the next round
+            const nextRoundButton = document.createElement('button');
+            nextRoundButton.id = 'nextRoundButton';
+            nextRoundButton.innerText = '進行下一輪';
+            nextRoundButton.onclick = generateQuestion;
+            document.getElementById('error-report').appendChild(document.createElement('br'));
+            document.getElementById('error-report').appendChild(nextRoundButton);
+        }
+
+        document.getElementById('answer').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        generateQuestion();
+    </script>
+</body>
+</html>
