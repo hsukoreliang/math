@@ -197,7 +197,7 @@
             });
 
             let allReports = allRoundsErrors.map((round, index) => 
-                `第${9 - index}輪錯題分析報告：
+                `被乘數${9 - index}  錯題分析報告：
 被乘數${round.multiplicand}，答對${round.correctCount}題，答錯${round.incorrectCount}題，共花了多少時間： ${round.time}。
 答錯題型：${round.errors.join(', ')}`
             ).join('\n\n');
