@@ -16,33 +16,36 @@
             margin-bottom: 20px;
         }
         .problem {
-            font-size: 24px;
+            font-size: 32px;
             margin: 20px 0;
             text-align: center;
         }
         input {
             width: 60px;
-            height: 30px;
-            font-size: 18px;
-            margin: 0 5px;
+            height: 40px;
+            font-size: 22px;
+            margin: 0 10px;
             text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px;
         }
         button {
             margin: 10px;
             padding: 10px 20px;
-            font-size: 16px;
+            font-size: 18px;
             cursor: pointer;
-            background-color: #4CAF50;
+            background-color: #006400;
             color: white;
             border: none;
             border-radius: 5px;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #008000;
         }
         #result {
             margin-top: 20px;
-            font-size: 18px;
+            font-size: 22px;
             text-align: center;
         }
         .analysis {
@@ -107,8 +110,10 @@
         let errorList = [];
 
         function generateNewProblem() {
-            currentDividend = Math.floor(Math.random() * 90 + 10);
-            currentDivisor = Math.floor(Math.random() * 8 + 2);
+            do {
+                currentDividend = Math.floor(Math.random() * 90 + 10);
+                currentDivisor = Math.floor(Math.random() * 8 + 2);
+            } while (Math.floor(currentDividend / currentDivisor) >= 10);
             
             document.getElementById('dividend').textContent = currentDividend;
             document.getElementById('divisor').textContent = currentDivisor;
@@ -117,22 +122,6 @@
             document.getElementById('result').textContent = '';
             
             document.getElementById('quotient').focus();
-        }
-
-        function updateStatistics() {
-            document.getElementById('totalCount').textContent = statistics.total;
-            document.getElementById('correctCount').textContent = statistics.correct;
-            document.getElementById('wrongCount').textContent = statistics.wrong;
-        }
-
-        function addErrorRecord(dividend, divisor, userQuotient, userRemainder, correctQuotient, correctRemainder) {
-            const errorItem = document.createElement('div');
-            errorItem.className = 'error-item';
-            errorItem.innerHTML = `
-                <div>題目：${dividend}÷${divisor}=${correctQuotient}......${correctRemainder}</div>
-                <div>學習者作答：${dividend}÷${divisor}=${userQuotient}......${userRemainder}</div>
-            `;
-            document.getElementById('errorList').appendChild(errorItem);
         }
 
         function checkAnswer() {
@@ -148,20 +137,46 @@
                 document.getElementById('result').textContent = '答對了！';
                 document.getElementById('result').style.color = 'green';
                 statistics.correct++;
-                setTimeout(generateNewProblem, 1000);
+                setTimeout(function() {
+                    generateNewProblem();
+                    document.getElementById('quotient').focus();
+                }, 1000);
             } else {
-                document.getElementById('result').textContent = `答錯了！正確答案是：${correctQuotient}......${correctRemainder}`;
+                document.getElementById('result').textContent = '答錯了！';
                 document.getElementById('result').style.color = 'red';
                 statistics.wrong++;
-                addErrorRecord(currentDividend, currentDivisor, userQuotient, userRemainder, correctQuotient, correctRemainder);
+                addErrorRecord(currentDividend, currentDivisor, userQuotient, userRemainder);
+                document.getElementById('quotient').focus();
             }
 
             updateStatistics();
         }
 
+        function addErrorRecord(dividend, divisor, userQuotient, userRemainder) {
+            const errorItem = document.createElement('div');
+            errorItem.className = 'error-item';
+            errorItem.innerHTML = `
+                <div>題目：${dividend}÷${divisor}</div>
+                <div>學習者作答：${userQuotient}......${userRemainder}</div>
+            `;
+            document.getElementById('errorList').appendChild(errorItem);
+        }
+
+        function updateStatistics() {
+            document.getElementById('totalCount').textContent = statistics.total;
+            document.getElementById('correctCount').textContent = statistics.correct;
+            document.getElementById('wrongCount').textContent = statistics.wrong;
+        }
+
         document.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 checkAnswer();
+            }
+        });
+
+        document.getElementById('quotient').addEventListener('input', function() {
+            if (this.value.length > 0) {
+                document.getElementById('remainder').focus();
             }
         });
 
