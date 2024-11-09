@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>指針式磅秤</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 150px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            width: 120px;
+        }
+        .scale-container {
+            position: relative;
+        }
+        .weight-display {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 10px 20px;
+            border: 2px solid #333;
+            border-radius: 5px;
+        }
+        svg {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+<div class="button-container">
+    <button onclick="changeWeight(5)">增加 5g</button>
+    <button onclick="changeWeight(-5)">減少 5g</button>
+    <button onclick="resetScale()">重置</button>
+</div>
+
+<div class="scale-container">
+    <!-- 重量顯示 -->
+    <div class="weight-display" id="weight-display">目前重量: 0g</div>
+
+    <svg width="500" height="500" viewBox="0 0 500 500">
+        <!-- 背景圓盤 -->
+        <circle cx="250" cy="250" r="200" fill="lightgray" />
+        
+        <!-- 磅秤刻度 -->
+        <g id="scales">
+            <!-- 繪製刻度圓環 -->
+            <circle cx="250" cy="250" r="190" fill="none" stroke="black" stroke-width="2"/>
+            
+            <!-- 刻度 -->
+            <g id="ticks">
+                <!-- 刻度線繪製 -->
+            </g>
+            
+            <!-- 添加刻度數字 -->
+            <g id="labels">
+                <!-- 每隔一定角度標註刻度數字 -->
+            </g>
+        </g>
+
+        <!-- 中心點 -->
+        <circle cx="250" cy="250" r="10" fill="black" />
+
+        <!-- 磅秤指針 -->
+        <line id="pointer" x1="250" y1="250" x2="250" y2="50" stroke="#2E4053" stroke-width="4" />
+        
+    </svg>
+</div>
+
+<script>
+    let currentWeight = 0; // 當前的重量值 (單位：g)
+    let totalRotation = 0; // 追蹤總旋轉角度
+    const maxWeight = 1000;  // 最大重量 (單位：g)
+    const tickInterval = 5;  // 每個刻度的間隔 (單位：g)
+    const totalTicks = maxWeight / tickInterval;  // 總刻度數
+    const anglePerTick = 360 / totalTicks;  // 每個刻度對應的角度
+    
+    // 繪製刻度
+    function drawTicks() {
+        const tickContainer = document.getElementById('ticks');
+        for (let i = 0; i <= totalTicks; i++) {
+            const angle = i * anglePerTick;
+            const x1 = 250 + Math.cos((angle - 90) * Math.PI / 180) * 190;
+            const y1 = 250 + Math.sin((angle - 90) * Math.PI / 180) * 190;
+            
+            const weight = i * tickInterval;
+            // 判斷是否為250的倍數或1000
+            const is250Multiple = weight % 250 === 0;
+            
+            if (weight % 50 === 0) {  // 每50g一個長刻度
+                // 計算刻度線的長度，0點位置特別處理
+                const scaleLength = weight === 0 ? 20 : 30; // 0點刻度線較短
+                const x2Long = 250 + Math.cos((angle - 90) * Math.PI / 180) * (190 - scaleLength);
+                const y2Long = 250 + Math.sin((angle - 90) * Math.PI / 180) * (190 - scaleLength);
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", x1);
+                line.setAttribute("y1", y1);
+                line.setAttribute("x2", x2Long);
+                line.setAttribute("y2", y2Long);
+                line.setAttribute("stroke", is250Multiple ? "red" : "black"); // 250的倍數使用紅色
+                line.setAttribute("stroke-width", "3");
+                tickContainer.appendChild(line);
+            } else {
+                const x2 = 250 + Math.cos((angle - 90) * Math.PI / 180) * 180;
+                const y2 = 250 + Math.sin((angle - 90) * Math.PI / 180) * 180;
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", x1);
+                line.setAttribute("y1", y1);
+                line.setAttribute("x2", x2);
+                line.setAttribute("y2", y2);
+                line.setAttribute("stroke", "black");
+                line.setAttribute("stroke-width", "1");
+                tickContainer.appendChild(line);
+            }
+            
+            // 每隔50g標註刻度數字
+            if (weight % 50 === 0) {  
+                const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                let labelX, labelY;
+                
+                // 特別處理1000和0的位置
+                if (weight === 0) {
+                    // 0放在上方
+                    labelX = 250;
+                    labelY = 250 - 155;
+                } else if (weight === maxWeight) {
+                    // 1000放在0的正下方，稍微往下一點
+                    labelX = 250;
+                    labelY = 250 - 135; // 比0的位置稍微往下20個單位
+                } else {
+                    labelX = 250 + Math.cos((angle - 90) * Math.PI / 180) * 140;
+                    labelY = 250 + Math.sin((angle - 90) * Math.PI / 180) * 140;
+                }
+                
+                label.setAttribute("x", labelX);
+                label.setAttribute("y", labelY);
+                label.setAttribute("fill", is250Multiple ? "red" : "black"); // 250的倍數使用紅色
+                label.setAttribute("font-size", is250Multiple ? "16" : "14"); // 250的倍數字體加大
+                label.setAttribute("text-anchor", "middle");
+                label.textContent = weight;
+                tickContainer.appendChild(label);
+            }
+        }
+    }
+
+    // 初始化繪製刻度
+    drawTicks();
+
+    // 更新指針
+    function changeWeight(delta) {
+        currentWeight += delta;
+        
+        // 當超過1000g時
+        if (currentWeight > maxWeight) {
+            totalRotation += 360; // 增加一圈的角度
+            currentWeight = delta; // 重置為增加值（5g）
+        }
+        
+        // 當小於0g時
+        if (currentWeight < 0) {
+            if (totalRotation >= 360) {
+                totalRotation -= 360; // 減少一圈的角度
+                currentWeight = maxWeight + currentWeight; // 從最大值開始減
+            } else {
+                currentWeight = 0;
+            }
+        }
+
+        updatePointer();
+        updateWeightDisplay();
+    }
+
+    // 更新指針角度
+    function updatePointer() {
+        const pointer = document.getElementById("pointer");
+        const weightAngle = (currentWeight / maxWeight) * 360;
+        const totalAngle = totalRotation + weightAngle;
+        pointer.setAttribute("transform", `rotate(${totalAngle}, 250, 250)`);
+    }
+
+    // 更新重量顯示
+    function updateWeightDisplay() {
+        const weightDisplay = document.getElementById("weight-display");
+        weightDisplay.textContent = `目前重量: ${currentWeight}g`;
+    }
+
+    // 重置磅秤
+    function resetScale() {
+        currentWeight = 0;
+        totalRotation = 0;
+        updatePointer();
+        updateWeightDisplay();
+    }
+</script>
+
+</body>
+</html>
