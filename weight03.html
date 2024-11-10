@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .scale-container {
+      width: 600px;
+      height: 600px;
+      margin: 20px auto;
+      position: relative;
+      transition: width 0.3s, height 0.3s;
+    }
+    .hand {
+      transform-origin: 50% 50%;
+      transition: transform 0.5s;
+    }
+    .control-panel {
+      text-align: center;
+      margin: 20px;
+    }
+    .zoom-btn {
+      padding: 8px 16px;
+      margin: 0 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    .zoom-btn:hover {
+      background-color: #1976D2;
+    }
+  </style>
+</head>
+<body>
+  <div class="control-panel">
+    <button class="zoom-btn" onclick="zoomIn()">放大</button>
+    <button class="zoom-btn" onclick="zoomOut()">縮小</button>
+  </div>
+  
+  <div class="scale-container" id="scaleContainer">
+    <svg viewBox="0 0 200 200">
+      <!-- 外圈 -->
+      <circle cx="100" cy="100" r="90" fill="white" stroke="#ccc" stroke-width="2"/>
+      
+      <!-- 刻度 -->
+      <g id="ticks">
+        <script>
+          const svg = document.querySelector('svg');
+          const TOTAL_MAJOR_TICKS = 30;
+          const MINOR_TICKS_PER_MAJOR = 10;
+          const TOTAL_TICKS = TOTAL_MAJOR_TICKS * MINOR_TICKS_PER_MAJOR;
+          
+          // 先繪製所有刻度線
+          for (let i = 0; i <= TOTAL_TICKS; i++) {
+            const angle = i * (360 / TOTAL_TICKS);
+            const isKg = i % (TOTAL_TICKS / 3) === 0;
+            const is500g = i % (TOTAL_TICKS / 6) === 0;
+            const isMajor = i % MINOR_TICKS_PER_MAJOR === 0;
+            
+            const length = isKg ? 15 : (is500g ? 12 : (isMajor ? 10 : 5));
+            const thickness = isKg ? 1.5 : (is500g ? 1.2 : (isMajor ? 1 : 0.5));
+            
+            const rad = (angle - 90) * Math.PI / 180;
+            const x1 = 100 + Math.cos(rad) * 80;
+            const y1 = 100 + Math.sin(rad) * 80;
+            const x2 = 100 + Math.cos(rad) * (80 - length);
+            const y2 = 100 + Math.sin(rad) * (80 - length);
+            
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", x1);
+            line.setAttribute("y1", y1);
+            line.setAttribute("x2", x2);
+            line.setAttribute("y2", y2);
+            line.setAttribute("stroke", isKg || is500g ? "red" : "black");
+            line.setAttribute("stroke-width", thickness);
+            svg.appendChild(line);
+          }
+          
+          // 再繪製所有數字標籤
+          for (let i = 0; i <= TOTAL_TICKS; i++) {
+            const angle = i * (360 / TOTAL_TICKS);
+            const isKg = i % (TOTAL_TICKS / 3) === 0;
+            const is500g = i % (TOTAL_TICKS / 6) === 0;
+            
+            if (isKg || is500g) {
+              const weight = (i / TOTAL_TICKS) * 3000;
+              const textAngle = angle;
+              const textRad = (textAngle - 90) * Math.PI / 180;
+              let textDistance = 50; // 將文字往內移動
+              let fontSize = 11;
+              
+              // 如果是0g或非3kg的值，使用原來的位置邏輯
+              if (weight !== 3000) {
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                
+                if (weight === 0) {
+                  text.setAttribute("x", "100");
+                  text.setAttribute("y", "45");
+                } else {
+                  const textX = 100 + Math.cos(textRad) * textDistance;
+                  const textY = 100 + Math.sin(textRad) * textDistance;
+                  text.setAttribute("x", textX);
+                  text.setAttribute("y", textY);
+                }
+                
+                text.setAttribute("text-anchor", "middle");
+                text.setAttribute("alignment-baseline", "middle");
+                text.setAttribute("fill", "black");
+                text.setAttribute("font-size", fontSize);
+                text.textContent = weight >= 1000 ? (weight/1000) + "kg" : weight + "g";
+                
+                // 添加白色背景
+                const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                bgRect.setAttribute("fill", "white");
+                svg.appendChild(bgRect);
+                svg.appendChild(text);
+                
+                // 調整背景矩形
+                const bbox = text.getBBox();
+                const padding = 1;
+                bgRect.setAttribute("x", bbox.x - padding);
+                bgRect.setAttribute("y", bbox.y - padding);
+                bgRect.setAttribute("width", bbox.width + 2 * padding);
+                bgRect.setAttribute("height", bbox.height + 2 * padding);
+              }
+            }
+          }
+          
+          // 單獨添加3kg標籤在紅框位置
+          const text3kg = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          text3kg.setAttribute("x", "100");
+          text3kg.setAttribute("y", "65");
+          text3kg.setAttribute("text-anchor", "middle");
+          text3kg.setAttribute("alignment-baseline", "middle");
+          text3kg.setAttribute("fill", "black");
+          text3kg.setAttribute("font-size", "11");
+          text3kg.textContent = "3kg";
+          
+          const bg3kg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          bg3kg.setAttribute("fill", "white");
+          svg.appendChild(bg3kg);
+          svg.appendChild(text3kg);
+          
+          const bbox3kg = text3kg.getBBox();
+          const padding = 1;
+          bg3kg.setAttribute("x", bbox3kg.x - padding);
+          bg3kg.setAttribute("y", bbox3kg.y - padding);
+          bg3kg.setAttribute("width", bbox3kg.width + 2 * padding);
+          bg3kg.setAttribute("height", bbox3kg.height + 2 * padding);
+        </script>
+      </g>
+      
+      <!-- 指針 -->
+      <g class="hand" id="scaleHand">
+        <path d="M 97,100 L 100,30 L 103,100 Z" fill="#2196F3"/>
+        <circle cx="100" cy="100" r="5" fill="#2196F3"/>
+      </g>
+      
+      <!-- 中心文字 -->
+      <text x="100" y="87" text-anchor="middle" font-size="8">最大計量 3kg</text>
+      <text x="100" y="97" text-anchor="middle" font-size="8">最小刻度 10g</text>
+    </svg>
+  </div>
+
+  <div style="text-align: center;">
+    <input type="range" min="0" max="3000" value="0" step="10" id="weightInput" style="width: 400px">
+    <div style="font-size: 18px; margin-top: 10px;">重量: <span id="weightDisplay">0</span>g</div>
+  </div>
+
+  <script>
+    const hand = document.getElementById('scaleHand');
+    const weightInput = document.getElementById('weightInput');
+    const weightDisplay = document.getElementById('weightDisplay');
+    const scaleContainer = document.getElementById('scaleContainer');
+    
+    let currentSize = 600;
+    const MIN_SIZE = 300;
+    const MAX_SIZE = 1000;
+    //const MAX_SIZE = 800;
+
+    const STEP_SIZE = 50;
+
+    function zoomIn() {
+      if (currentSize < MAX_SIZE) {
+        currentSize += STEP_SIZE;
+        updateSize();
+      }
+    }
+
+    function zoomOut() {
+      if (currentSize > MIN_SIZE) {
+        currentSize -= STEP_SIZE;
+        updateSize();
+      }
+    }
+
+    function updateSize() {
+      scaleContainer.style.width = currentSize + 'px';
+      scaleContainer.style.height = currentSize + 'px';
+    }
+
+    weightInput.addEventListener('input', function() {
+      const weight = parseInt(this.value);
+      const angle = (weight / 3000) * 360;
+      hand.style.transform = `rotate(${angle}deg)`;
+      weightDisplay.textContent = weight;
+    });
+  </script>
+</body>
+</html>
