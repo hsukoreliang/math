@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>重量換算練習</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .question-box {
+            margin: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            font-size: 1.2em;
+        }
+        input {
+            width: 100px;
+            padding: 8px;
+            margin: 0 5px;
+            text-align: center;
+            font-size: 1em;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .correct {
+            color: green;
+        }
+        .wrong {
+            color: red;
+        }
+        #score {
+            font-size: 1.2em;
+            margin: 20px;
+        }
+        #errorLog {
+            margin: 20px;
+            text-align: left;
+            background-color: #fff3f3;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .errorItem {
+            margin: 10px 0;
+            color: #d32f2f;
+        }
+        #showErrorLog {
+            background-color: #ff9800;
+        }
+        #showErrorLog:hover {
+            background-color: #f57c00;
+        }
+    </style>
+</head>
+<body>
+    <h1>重量換算練習</h1>
+    <div class="question-box">
+        <div id="question"></div>
+    </div>
+    <div>
+        <button onclick="checkAnswer()">檢查答案</button>
+        <button onclick="generateQuestion()">新題目</button>
+        <button id="showErrorLog" onclick="toggleErrorLog()">顯示錯誤紀錄</button>
+    </div>
+    <div id="result"></div>
+    <div id="score">正確：0 題 / 錯誤：0 題</div>
+    <div id="errorLog">
+        <h3>錯誤紀錄：</h3>
+        <div id="errorItems"></div>
+    </div>
+
+    <script>
+        let correctAnswer = 0;
+        let totalCorrect = 0;
+        let totalWrong = 0;
+        let canAnswer = true;
+        let currentQuestion = '';
+        let errorLog = [];
+
+        function generateQuestion() {
+            canAnswer = true;
+            
+            document.getElementById('result').textContent = '';
+            document.getElementById('result').className = '';
+            
+            const questionType = Math.floor(Math.random() * 3);
+            let questionText, answer;
+
+            switch (questionType) {
+                case 0:
+                    const kg = Math.floor(Math.random() * 10) + 1;
+                    questionText = `${kg}公斤=(    )公克`;
+                    answer = kg * 1000;
+                    break;
+                case 1:
+                    const g = (Math.floor(Math.random() * 10) + 1) * 1000;
+                    questionText = `${g}公克=(    )公斤`;
+                    answer = g / 1000;
+                    break;
+                case 2:
+                    const wholeKg = Math.floor(Math.random() * 5) + 1;
+                    const extraG = Math.floor(Math.random() * 999);
+                    questionText = `${wholeKg}公斤${extraG}公克=(    )公克`;
+                    answer = wholeKg * 1000 + extraG;
+                    break;
+            }
+
+            correctAnswer = answer;
+            currentQuestion = questionText;
+            document.getElementById('question').innerHTML = 
+                questionText.replace('(    )', '(<input type="text" id="answer" onkeypress="checkEnter(event)"/>)');
+            
+            document.getElementById('answer').focus();
+        }
+
+        function checkEnter(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        }
+
+        function checkAnswer() {
+            if (!canAnswer) return;
+
+            const answerInput = document.getElementById('answer');
+            const userAnswer = Number(answerInput.value);
+            const resultDiv = document.getElementById('result');
+
+            if (userAnswer === correctAnswer) {
+                resultDiv.textContent = '答對了！';
+                resultDiv.className = 'correct';
+                totalCorrect++;
+                canAnswer = false;
+                
+                setTimeout(generateQuestion, 1000);
+            } else {
+                resultDiv.textContent = '答錯了！';
+                resultDiv.className = 'wrong';
+                totalWrong++;
+                
+                // 記錄錯誤
+                const errorItem = {
+                    question: currentQuestion,
+                    userAnswer: userAnswer
+                };
+                errorLog.push(errorItem);
+                updateErrorLog();
+                
+                answerInput.value = '';
+                answerInput.focus();
+            }
+
+            updateScore();
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = 
+                `正確：${totalCorrect} 題 / 錯誤：${totalWrong} 題`;
+        }
+
+        function updateErrorLog() {
+            const errorItems = document.getElementById('errorItems');
+            errorItems.innerHTML = errorLog.map(error => `
+                <div class="errorItem">
+                    題目：${error.question} 
+                    輸入答案：${error.userAnswer}
+                </div>
+            `).join('');
+        }
+
+        function toggleErrorLog() {
+            const errorLog = document.getElementById('errorLog');
+            const isHidden = errorLog.style.display === 'none' || !errorLog.style.display;
+            errorLog.style.display = isHidden ? 'block' : 'none';
+            document.getElementById('showErrorLog').textContent = 
+                isHidden ? '隱藏錯誤紀錄' : '顯示錯誤紀錄';
+        }
+
+        // 頁面載入時初始化
+        window.onload = function() {
+            generateQuestion();
+            document.getElementById('errorLog').style.display = 'none';
+        };
+    </script>
+</body>
+</html>
