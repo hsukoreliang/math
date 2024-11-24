@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>重量計算練習</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .calculation-box {
+            display: inline-block;
+            margin: 20px;
+            padding: 15px 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .problem-grid {
+            display: grid;
+            grid-template-columns: 30px 100px 100px;
+            gap: 5px;
+            margin-bottom: 10px;
+            align-items: center;
+            position: relative;
+        }
+        .unit-label {
+            font-size: 16px;
+            text-align: center;
+            padding: 5px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+        }
+        .kg-cell {
+            background-color: #fff3bf;
+            width: 80px;
+            height: 40px;
+            border: 1px solid #ddd;
+            text-align: right;
+            padding: 5px 10px;
+            font-size: 20px;
+        }
+        .g-cell {
+            background-color: #ebfaeb;
+            width: 80px;
+            height: 40px;
+            border: 1px solid #ddd;
+            text-align: right;
+            padding: 5px 10px;
+            font-size: 20px;
+        }
+        .operator {
+            font-size: 24px;
+            margin-left: 10px;
+            grid-column: 1;
+        }
+        .horizontal-line {
+            border-top: 2px solid #000;
+            margin: 5px 0;
+            grid-column: 1 / span 3;
+            width: 230px;
+            position: relative;
+            top: -10px;  /* 調整橫線位置 */
+        }
+        .button-container {
+            text-align: right;
+            margin-top: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .score {
+            font-size: 1.2em;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .feedback.correct {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .feedback.wrong {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        input[type="text"] {
+            width: 80px;
+            height: 40px;
+            font-size: 20px;
+            text-align: right;
+            padding: 5px 10px;
+            border: 2px solid #000;
+            border-radius: 4px;
+            position: relative;
+            top: -10px;  /* 調整輸入框位置 */
+        }
+        .input-kg {
+            background-color: #fff3bf;
+        }
+        .input-g {
+            background-color: #ebfaeb;
+        }
+        .wrong-answers {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .wrong-answers h3 {
+            color: #c62828;
+            margin-top: 0;
+        }
+        .problem-text {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #333;
+            background-color: #e3f2fd;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="problem-text" id="problemText"></div>
+
+        <div class="calculation-box">
+            <div class="problem-grid" id="problemGrid">
+                <div></div>
+                <div class="unit-label">公斤</div>
+                <div class="unit-label">公克</div>
+                
+                <div></div>
+                <div class="kg-cell" id="kg1">3</div>
+                <div class="g-cell" id="g1">240</div>
+                
+                <div class="operator">+</div>
+                <div class="kg-cell" id="kg2">2</div>
+                <div class="g-cell" id="g2">576</div>
+                
+                <div class="horizontal-line"></div>
+                
+                <div></div>
+                <input type="text" class="input-kg" id="answerKg" maxlength="2">
+                <input type="text" class="input-g" id="answerG" maxlength="3">
+            </div>
+
+            <div class="button-container">
+                <button onclick="checkAnswer()">檢查答案</button>
+                <button onclick="generateQuestion()">下一題</button>
+            </div>
+
+            <div id="feedback" class="feedback"></div>
+        </div>
+
+        <div class="score" id="scoreBoard">
+            答對題數: <span id="correctCount">0</span> | 
+            答錯題數: <span id="wrongCount">0</span>
+        </div>
+
+        <div class="wrong-answers" id="wrongAnswers">
+            <h3>錯題報告</h3>
+            <div id="wrongAnswersList"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentAnswer = null;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let wrongAnswers = [];
+        let currentProblem = null;
+
+        function generateQuestion() {
+            const kg1 = Math.floor(Math.random() * 10);
+            let g1 = Math.floor(Math.random() * 1000);
+            if (g1 < 100) g1 += 100;
+            
+            const kg2 = Math.floor(Math.random() * 5);
+            let g2 = Math.floor(Math.random() * 1000);
+            if (g2 < 100) g2 += 100;
+            
+            const operators = ['+', '-'];
+            const operator = operators[Math.floor(Math.random() * 2)];
+            
+            document.getElementById('kg1').textContent = kg1;
+            document.getElementById('g1').textContent = g1;
+            document.getElementById('kg2').textContent = kg2;
+            document.getElementById('g2').textContent = g2;
+            document.querySelector('.operator').textContent = operator;
+            
+            if (operator === '+') {
+                currentAnswer = (kg1 * 1000 + g1) + (kg2 * 1000 + g2);
+                currentProblem = `${kg1}公斤${g1}公克 + ${kg2}公斤${g2}公克 = ?`;
+            } else {
+                if ((kg1 * 1000 + g1) >= (kg2 * 1000 + g2)) {
+                    currentAnswer = (kg1 * 1000 + g1) - (kg2 * 1000 + g2);
+                    currentProblem = `${kg1}公斤${g1}公克 - ${kg2}公斤${g2}公克 = ?`;
+                } else {
+                    document.getElementById('kg1').textContent = kg2;
+                    document.getElementById('g1').textContent = g2;
+                    document.getElementById('kg2').textContent = kg1;
+                    document.getElementById('g2').textContent = g1;
+                    currentAnswer = (kg2 * 1000 + g2) - (kg1 * 1000 + g1);
+                    currentProblem = `${kg2}公斤${g2}公克 - ${kg1}公斤${g1}公克 = ?`;
+                }
+            }
+            
+            document.getElementById('problemText').textContent = `題目：${currentProblem}`;
+            document.getElementById('answerKg').value = '';
+            document.getElementById('answerG').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            
+            document.getElementById('answerG').focus();
+        }
+
+        function checkAnswer() {
+            if (currentAnswer === null) {
+                alert('請先生成題目！');
+                return;
+            }
+
+            const userKg = parseInt(document.getElementById('answerKg').value) || 0;
+            const userG = parseInt(document.getElementById('answerG').value) || 0;
+            const userAnswer = userKg * 1000 + userG;
+
+            const feedback = document.getElementById('feedback');
+            
+            if (userAnswer === currentAnswer) {
+                feedback.textContent = '答對了！';
+                feedback.className = 'feedback correct';
+                correctCount++;
+                setTimeout(generateQuestion, 1000);
+            } else {
+                feedback.textContent = '答錯了！請重試';
+                feedback.className = 'feedback wrong';
+                wrongCount++;
+                
+                // 記錄錯誤的答案
+                const wrongAnswer = {
+                    problem: currentProblem,
+                    userAnswer: `${userKg}公斤${userG}公克`
+                };
+                wrongAnswers.push(wrongAnswer);
+                updateWrongAnswersList();
+                
+                document.getElementById('answerG').focus();
+            }
+            
+            // 更新計分板
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('wrongCount').textContent = wrongCount;
+        }
+
+        function updateWrongAnswersList() {
+            const list = document.getElementById('wrongAnswersList');
+            list.innerHTML = wrongAnswers.map((item, index) => `
+                <div style="margin-bottom: 10px; padding: 5px; border-bottom: 1px solid #ddd;">
+                    <div>題目 ${index + 1}: ${item.problem}</div>
+                    <div>你的答案: ${item.userAnswer}</div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('answerKg').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        
+        document.getElementById('answerG').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        document.getElementById('answerG').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        generateQuestion();
+    </script>
+</body>
+</html>
