@@ -70,6 +70,31 @@
       color: #a94442;
       border: 1px solid #ebccd1;
     }
+    #scoreBoard, #errorReport {
+      text-align: center;
+      margin: 20px;
+      font-size: 18px;
+    }
+    #errorReportDetails {
+      text-align: left;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+    }
+
+    .error-toggle-btn {
+      padding: 8px 16px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #FF9800;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+
   </style>
 </head>
 <body>
@@ -193,8 +218,14 @@
       
       <!-- 中心文字 -->
       <text x="100" y="87" text-anchor="middle" font-size="8">最大計量 3kg</text>
-      <text x="100" y="97" text-anchor="middle" font-size="8">最小刻度 10g</text>
+      <text x="100" y="97" text-anchor="middle" font-size="8">最小刻度 0g</text>
     </svg>
+  </div>
+
+  <div id="scoreBoard">
+    總題數: <span id="totalQuestions">0</span> | 
+    答對題數: <span id="correctQuestions">0</span> | 
+    答錯題數: <span id="incorrectQuestions">0</span>
   </div>
 
   <div class="input-container">
@@ -206,12 +237,28 @@
 
   <div id="message" class="message"></div>
 
+
+  <div id="errorReport">
+    <button onclick="toggleErrorReport()" class="error-toggle-btn">查看錯題報告</button>
+    <div id="errorReportDetails">
+ 
+</div>
+  </div>
+
+
+
+ 
+
   <script>
     const hand = document.getElementById('scaleHand');
     const scaleContainer = document.getElementById('scaleContainer');
     const kgInput = document.getElementById('kgInput');
     const gInput = document.getElementById('gInput');
     const messageDiv = document.getElementById('message');
+    const totalQuestionsSpan = document.getElementById('totalQuestions');
+    const correctQuestionsSpan = document.getElementById('correctQuestions');
+    const incorrectQuestionsSpan = document.getElementById('incorrectQuestions');
+    const errorReportDetails = document.getElementById('errorReportDetails');
     
     let currentSize = 600;
     const MIN_SIZE = 300;
@@ -219,6 +266,10 @@
     const STEP_SIZE = 50;
     
     let currentWeight = 0;
+    let totalQuestions = 0;
+    let correctQuestions = 0;
+    let incorrectQuestions = 0;
+    let errorLog = [];
 
     function zoomIn() {
       if (currentSize < MAX_SIZE) {
@@ -256,15 +307,57 @@
       const g = parseInt(gInput.value || '0');
       const userWeight = kg * 1000 + g;
       
+      // 更新題目總數
+      totalQuestions++;
+      totalQuestionsSpan.textContent = totalQuestions;
+      
       messageDiv.style.display = 'block';
       
       if (userWeight === currentWeight) {
+        // 答對
+        correctQuestions++;
+        correctQuestionsSpan.textContent = correctQuestions;
+        
         messageDiv.className = 'message correct';
         messageDiv.textContent = '答對了！現在的重量是 ' + currentWeight + '公克';
+        
+        // 1秒後自動出題
+        setTimeout(generateNewQuestion, 1000);
       } else {
+        // 答錯
+        incorrectQuestions++;
+        incorrectQuestionsSpan.textContent = incorrectQuestions;
+        
         messageDiv.className = 'message incorrect';
         messageDiv.textContent = '答錯了，請再試一次！';
+        
+        // 記錄錯題
+        errorLog.push({
+          correctWeight: currentWeight,
+          userAnswer: userWeight,
+          userKg: kg,
+          userG: g
+        });
+        
+        // 更新錯題報告
+        updateErrorReport();
       }
+    }
+
+    function updateErrorReport() {
+      errorReportDetails.innerHTML = errorLog.map((error, index) => {
+        // 將重量轉換成 0公斤850公克（850公克）的格式
+        const kgPart = Math.floor(error.correctWeight / 1000);
+        const gPart = error.correctWeight % 1000;
+        const formattedCorrectWeight = `${kgPart}公斤${gPart}公克（${error.correctWeight}公克）`;
+
+     return `
+        <p>錯題 ${index + 1}:
+          正確重量: ${formattedCorrectWeight}，
+          你的答案: ${error.userKg}公斤${error.userG}公克 (${error.userAnswer}公克)
+        </p>
+      `}).join('');
+
     }
 
     // 限制只能輸入數字
@@ -280,6 +373,17 @@
 
     // 載入時生成第一題
     generateNewQuestion();
+
+    function toggleErrorReport() {
+      const errorDetails = document.getElementById('errorReportDetails');
+  
+      if (errorDetails.style.display === 'block') {
+        errorDetails.style.display = 'none';
+      } else {
+        errorDetails.style.display = 'block';
+      }
+    }
+
   </script>
 </body>
 </html>
