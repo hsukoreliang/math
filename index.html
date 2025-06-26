@@ -3,164 +3,509 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>三年級上學期 數學輔助練習器</title>
+    <title>Podcast 成語教學</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Microsoft JhengHei', Arial, sans-serif;
-            line-height: 1.6;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             color: #333;
-            max-width: 800px;
+        }
+
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            padding: 40px 20px;
         }
-        h1 {
-            color: #2C3E50;
+
+        .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
+            animation: fadeInDown 1s ease-out;
         }
-        .unit {
-            background-color: white;
-            border-left: 5px solid #3498DB;
+
+        .header h1 {
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .podcast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .podcast-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .podcast-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .podcast-card:hover::before {
+            opacity: 1;
+        }
+
+        .podcast-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+
+        .episode-number {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .idiom-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .idiom-main {
+            font-size: 2.2rem;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .idiom-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 4px solid #3498db;
+        }
+
+        .idiom-item {
+            background: white;
             padding: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
         }
-        .unit-title {
-            color: #3498DB;
-            font-size: 1.5em;
-            margin-bottom: 15px;
+
+        .idiom-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
-        .practice-item {
-            margin-bottom: 15px;
+
+        .idiom-text {
+            font-size: 1.3rem;
+            color: #27ae60;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
-        .file-name {
-            font-size: 0.9em;
-            color: #7F8C8D;
-            margin-left: 20px;
-        }
-        a {
-            color: #2980B9;
+
+        .download-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
             text-decoration: none;
+            justify-content: center;
         }
-        a:hover {
-            text-decoration: underline;
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255,107,107,0.4);
+            background: linear-gradient(45deg, #ee5a52, #ff6b6b);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        .download-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .play-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(78,205,196,0.3);
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(78,205,196,0.3);
+        }
+
+        .control-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .podcast-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .idiom-title {
+                font-size: 1.5rem;
+            }
+            
+            .idiom-main {
+                font-size: 1.8rem;
+            }
+            
+            .control-buttons {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .play-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .wave-animation {
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .wave-bar {
+            display: inline-block;
+            width: 3px;
+            height: 10px;
+            background: #4ecdc4;
+            margin: 0 1px;
+            animation: wave 1s infinite ease-in-out;
+        }
+
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes wave {
+            0%, 40%, 100% { transform: scaleY(0.4); }
+            20% { transform: scaleY(1.0); }
         }
     </style>
 </head>
 <body>
-    <h1>三年級上學期 數學輔助練習器</h1>
+    <div class="container">
+        <div class="header">
+            <h1>🎙️ Podcast 成語教學</h1>
+            <p>透過生動有趣的 Podcast 學習中華成語智慧</p>
+        </div>
 
-    <div class="unit">
-        <div class="unit-title">第一單元 10000以內的數</div>
-        <div class="practice-item">
-            題型：<a href="number-sequence-game1.html" target="_blank">數列填空</a>
-            <div class="file-name">number-sequence-game1.html</div>
+        <div class="podcast-grid">
+            <!-- 第一集 -->
+            <div class="podcast-card">
+                <div class="episode-number">第 1 集</div>
+                <div class="idiom-title">🦻 耳</div>
+                <div class="idiom-content">
+                    <div class="idiom-item">
+                        <div class="idiom-text">「洗耳恭聽」</div>
+                        <p>專心仔細地聆聽，表示對說話者的尊重</p>
+                    </div>
+                    <div class="idiom-item">
+                        <div class="idiom-text">「耳目一新」</div>
+                        <p>聽到或看到的內容令人感到新鮮、驚喜</p>
+                    </div>
+                </div>
+                <div class="control-buttons">
+                    <button class="play-btn" onclick="playPodcast(1)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                        <div class="wave-animation" id="wave1" style="display: none;">
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                        </div>
+                    </button>
+                </div>
+                <a href="#" class="download-btn" onclick="downloadTranscript(1)">
+                    <svg class="download-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                    逐字稿下載
+                </a>
+            </div>
+
+            <!-- 第二集 -->
+            <div class="podcast-card">
+                <div class="episode-number">第 2 集</div>
+                <div class="idiom-title">🦘 躍</div>
+                <div class="idiom-content">
+                    <div class="idiom-item">
+                        <div class="idiom-text">「躍躍欲試」</div>
+                        <p>形容急切地想要試試看，充滿躍動的心情</p>
+                    </div>
+                </div>
+                <div class="control-buttons">
+                    <button class="play-btn" onclick="playPodcast(2)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                        <div class="wave-animation" id="wave2" style="display: none;">
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                        </div>
+                    </button>
+                </div>
+                <a href="#" class="download-btn" onclick="downloadTranscript(2)">
+                    <svg class="download-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                    逐字稿下載
+                </a>
+            </div>
         </div>
-        <div class="practice-item">
-            題型：<a href="total_amount.html" target="_blank">5個千和3個十，合起來是多少？</a>
-            <div class="file-name">total_amount.html</div>
-        </div>
-        <div class="practice-item">
-            題型：13個百可以換幾個千？幾個百？
-        </div>
-        <div class="practice-item">
-            題型：<a href="number-writing-practice.html" target="_blank">「五千零六」記成？</a>
-            <div class="file-name">number-writing-practice.html</div>
-        </div>
-        <div class="practice-item">
-            題型：數字比大小
-        </div>
-        <div class="practice-item">
-            題型：<a href="number-card01.html" target="_blank">四個數字卡排列，取最大或最小四位數</a>
-            <div class="file-name">number-card01.html</div>
-        </div>
-        <div class="practice-item">
-            題型：四個數字卡排列，取最大或最小四位數 (預先固定某一個數字卡位置）
+
+        <div class="footer">
+            <p>© 2025 Podcast 成語教學 | 讓學習成語變得更有趣</p>
         </div>
     </div>
 
-    <div class="unit">
-        <div class="unit-title">第二單元 角和形狀</div>
-        <div class="practice-item">
-            暫無練習內容
-        </div>
-    </div>
+    <script>
+        let currentPlaying = null;
+        let currentAudio = null;
 
-    <div class="unit">
-        <div class="unit-title">第三單元 10000以內的加減</div>
-        <div class="practice-item">
-            題型：<a href="subtraction.html" target="_blank">退位減法 計算練習</a>
-            <div class="file-name">subtraction.html</div>
-        </div>
-    </div>
+        // 定義音頻文件路徑
+        const audioFiles = {
+            1: 'audio/episode1.wav',  // 第1集音頻文件路徑
+            2: 'audio/episode2.wav'   // 第2集音頻文件路徑
+        };
 
-    <div class="unit">
-        <div class="unit-title">第四單元 乘法</div>
-        <div class="practice-item">
-            題型：<a href="multiplication01.html" target="_blank">九九乘法表 測驗</a>
-            <div class="file-name">multiplication01.html</div>
-        </div>
-        <div class="practice-item">
-            題型：<a href="multiplicaton04.html" target="_blank">乘法 計算練習</a>
-            <div class="file-name">multiplicaton04.html</div>
-        </div>
-    </div>
+        function playPodcast(episode) {
+            // 停止其他正在播放的音頻
+            if (currentAudio && currentPlaying !== episode) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                resetButton(currentPlaying);
+            }
 
-    <div class="unit">
-        <div class="unit-title">第六單元 除法</div>
-        <div class="practice-item">
-            題型：<a href="division.html" target="_blank">二位除以一位 除法</a>
-            <div class="file-name">division.html</div>
-        </div>
-
-    </div>
-
-
-        <div class="unit">
-        <div class="unit-title">第七單元 公斤與公克</div>
-        <div class="practice-item">
-            操作：<a href="turng.html" target="_blank">觀察轉動指針秤 1000g</a>
-            <div class="file-name">turng.html</div>
-        </div>
-
-        <div class="practice-item">
-            題型：<a href="weight02.html" target="_blank">填入指針秤重量 1000g</a>
-            <div class="file-name">weight02.html</div>
-        </div>
-
+            const waveElement = document.getElementById(`wave${episode}`);
+            const button = document.querySelector(`[onclick="playPodcast(${episode})"]`);
             
-        <div class="practice-item">
-            操作：<a href="weight03.html" target="_blank">觀察轉動指針秤 3Kg</a>
-            <div class="file-name">weight03.html</div>
-        </div>
-        <div class="practice-item">
-            題型：<a href="weight05.html" target="_blank">填入指針秤重量 3Kg</a>
-            <div class="file-name">weight05.html</div>
-        </div>
-        <div class="practice-item">
-            題型：<a href="weight04.html" target="_blank">公斤公克換算</a>
-            <div class="file-name">weight04.html</div>
-        </div>
+            if (currentPlaying === episode && currentAudio) {
+                // 暫停當前音頻
+                currentAudio.pause();
+                resetButton(episode);
+                currentPlaying = null;
+                currentAudio = null;
+            } else {
+                // 播放新音頻
+                try {
+                    currentAudio = new Audio(audioFiles[episode]);
+                    
+                    // 音頻載入成功後播放
+                    currentAudio.addEventListener('loadeddata', () => {
+                        currentAudio.play();
+                        setPlayingButton(episode);
+                        currentPlaying = episode;
+                    });
+                    
+                    // 音頻播放結束
+                    currentAudio.addEventListener('ended', () => {
+                        resetButton(episode);
+                        currentPlaying = null;
+                        currentAudio = null;
+                    });
+                    
+                    // 音頻載入錯誤
+                    currentAudio.addEventListener('error', () => {
+                        alert(`無法載入音頻文件：${audioFiles[episode]}`);
+                        resetButton(episode);
+                        currentPlaying = null;
+                        currentAudio = null;
+                    });
+                    
+                } catch (error) {
+                    alert(`音頻播放錯誤：${error.message}`);
+                    resetButton(episode);
+                }
+            }
+        }
 
+        function setPlayingButton(episode) {
+            const waveElement = document.getElementById(`wave${episode}`);
+            const button = document.querySelector(`[onclick="playPodcast(${episode})"]`);
+            
+            waveElement.style.display = 'inline-block';
+            button.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                </svg>
+                暫停
+                <div class="wave-animation" id="wave${episode}" style="display: inline-block;">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+            `;
+        }
 
-                    <div class="practice-item">
-            題型：<a href="weigh06.html" target="_blank">重量計算</a>
-            <div class="file-name">weight06.html</div>
-        </div>
+        function resetButton(episode) {
+            const waveElement = document.getElementById(`wave${episode}`);
+            const button = document.querySelector(`[onclick="playPodcast(${episode})"]`);
+            
+            waveElement.style.display = 'none';
+            button.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+                播放
+                <div class="wave-animation" id="wave${episode}" style="display: none;">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+            `;
+        }
 
- </div>                 
- <div class="unit">
-<div class="unit-title">第一單元 公升與毫升
- <div class="practice-item">
-            題型：<a href="unit-converter02.html" target="_blank">容量計算（公升毫升，加法）</a>
-            <div class="file-name">unit-converter02.html</div>
-        </div>
+        function downloadTranscript(episode) {
+            // 定義 PDF 文件路徑
+            const pdfFiles = {
+                1: 'https://drive.google.com/file/d/13kYT-mNIeoZfxs5XGxsYy9D_CWGnc9bW/view?usp=sharing',  // 第1集PDF路徑
+                2: 'https://drive.google.com/file/d/187c9yf6Ebr8gQVaqN_xA4o3khCNW8Y9e/view?usp=sharing'   // 第2集PDF路徑
+            };
 
-                                <div class="practice-item">
-            題型：<a href="unit-converter01.html" target="_blank">容量計算（公升毫升，減法）</a>
-            <div class="file-name">unit-converter01.html</div>
-    </div>
-        </div>
+            // 直接下載 PDF 文件
+            const link = document.createElement('a');
+            link.href = pdfFiles[episode];
+            link.download = `成語教學_第${episode}集_逐字稿.pdf`;
+            link.target = '_blank';  // 在新標籤頁開啟
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // 顯示下載成功提示
+            const btn = event.target.closest('.download-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `
+                <svg class="download-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+                下載完成！
+            `;
+            btn.style.background = 'linear-gradient(45deg, #2ecc71, #27ae60)';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = 'linear-gradient(45deg, #ff6b6b, #ee5a52)';
+            }, 2000);
+        }
+
+        // 頁面載入動畫
+        window.addEventListener('load', () => {
+            const cards = document.querySelectorAll('.podcast-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+            });
+        });
+    </script>
 </body>
 </html>
