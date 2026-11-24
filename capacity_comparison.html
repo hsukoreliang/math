@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本學習內容：NC-2-12-1 認識容量並進行容量的直接、間接與個別單位比較</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts Noto Sans TC 與 Roboto Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #ecfeff;
+            color: #1e293b;
+        }
+        .math-font {
+            font-family: 'Roboto Mono', 'Noto Sans TC', monospace;
+        }
+        /* 隱藏數字輸入框上下箭頭 */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        /* 錯誤晃動動畫 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+        /* 答對彈跳動畫 */
+        @keyframes pop {
+            0% { transform: scale(0.95); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop {
+            animation: pop 0.35s ease-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-6 px-4 sm:px-6">
+
+    <!-- 主容器 -->
+    <main class="w-full max-w-2xl space-y-5">
+
+        <!-- 1. 學習重點提示橫幅 -->
+        <header class="bg-white border border-cyan-200 border-l-[6px] border-l-cyan-600 rounded-r-xl rounded-l-sm shadow-sm p-4 sm:p-5">
+            <h1 class="text-base sm:text-lg font-bold text-cyan-800 leading-snug mb-2.5">
+                基本學習內容：NC-2-12-1 認識容量並進行容量的直接、間接與個別單位比較（對應課綱 N-2-12）。
+            </h1>
+            <div class="text-sm sm:text-base text-slate-700 leading-relaxed space-y-1.5">
+                <p class="font-bold text-slate-900">重點提醒：</p>
+                <ul class="space-y-1.5 pl-1">
+                    <li class="flex items-start gap-2">
+                        <span class="shrink-0 font-extrabold text-cyan-800 bg-cyan-100 border border-cyan-300 px-2 py-0.5 rounded-md text-xs sm:text-sm mt-0.5">直接比較</span>
+                        <span>把兩個容器裝滿水，倒進「一樣大」的透明杯子看水位高低，或將甲容器的水倒進乙容器（沒滿代表乙較大、滿出來代表甲較大）。</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="shrink-0 font-extrabold text-teal-800 bg-teal-100 border border-teal-300 px-2 py-0.5 rounded-md text-xs sm:text-sm mt-0.5">間接比較</span>
+                        <span>甲和乙不能直接倒在一起時，找一個第三者（丙容器或相同刻度杯）來幫忙比！</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="shrink-0 font-extrabold text-sky-800 bg-sky-100 border border-sky-300 px-2 py-0.5 rounded-md text-xs sm:text-sm mt-0.5">個別單位比較</span>
+                        <span>用同一個小杯子（或湯匙）當標準，數數看各能裝滿幾杯，杯數越多容量越大！</span>
+                    </li>
+                </ul>
+            </div>
+        </header>
+
+        <!-- 小節標題與進度指示 -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+            <div class="flex items-center gap-2.5">
+                <span class="w-1.5 h-6 bg-cyan-600 rounded-full inline-block"></span>
+                <h2 class="text-lg sm:text-xl font-bold text-slate-800">
+                    容量大小比比看
+                </h2>
+            </div>
+            <span id="progress-badge" class="text-xs sm:text-sm font-bold px-3 py-1 rounded-full bg-cyan-100 text-cyan-900">
+                基礎範例：第 1 題 / 共 6 題
+            </span>
+        </div>
+
+        <!-- 2. 單題互動卡片 -->
+        <section class="bg-white border-2 border-slate-300 rounded-2xl shadow-md overflow-hidden">
+
+            <!-- 頂部題型標籤與小提示開關 -->
+            <div class="bg-gradient-to-r from-cyan-50 to-sky-50 border-b border-slate-200 py-3.5 px-4 sm:px-6 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                    <span id="question-number-badge" class="math-font text-sm sm:text-base font-extrabold text-cyan-900 bg-white px-2.5 py-0.5 rounded-md border border-cyan-300">
+                        (1)
+                    </span>
+                    <span id="category-badge" class="px-3 py-1 rounded-lg text-xs sm:text-sm font-extrabold bg-cyan-600 text-white shadow-2xs">
+                        直接比較－倒水實驗
+                    </span>
+                </div>
+
+                <!-- 顯示容量比較小提示開關 -->
+                <button type="button" id="btn-toggle-hint" onclick="toggleVisualHint()"
+                    class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-cyan-900 bg-white border border-cyan-300 hover:bg-cyan-50 active:scale-95 transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer">
+                    <span>🔍</span>
+                    <span id="hint-btn-text">顯示容量比較小提示</span>
+                </button>
+            </div>
+
+            <!-- 題目作答主區域 -->
+            <div class="p-5 sm:p-8 flex flex-col items-center justify-center bg-white">
+
+                <!-- 動態 SVG 實驗圖示容器 -->
+                <div id="svg-illustration-wrapper" class="w-full max-w-[460px] bg-slate-50/70 border border-slate-200 rounded-2xl p-3 sm:p-4 mb-5 flex items-center justify-center">
+                    <svg id="capacity-svg" viewBox="0 0 460 220" class="w-full h-auto select-none" aria-label="容量比較實驗圖示">
+                        <!-- 由 JavaScript 動態繪製 -->
+                    </svg>
+                </div>
+
+                <!-- 題目敘述與互動作答區 -->
+                <div id="question-content-area" class="w-full flex flex-col items-center justify-center gap-4 text-base sm:text-xl font-bold text-slate-800">
+                    <!-- 由 JavaScript 動態渲染 -->
+                </div>
+
+                <!-- 即時回饋訊息顯示區 -->
+                <div id="feedback-box" class="w-full max-w-lg mt-5 min-h-[3.75rem] flex items-center justify-center">
+                    <p class="text-slate-400 text-sm text-center">
+                        請選擇或填寫答案後，按 Enter 鍵或點擊下方「對答案」按鈕
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. 最下方按鈕區：對答案、下一題 -->
+        <footer class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-1">
+            <button type="button" id="btn-check" onclick="checkAnswer()"
+                class="w-full sm:w-48 px-6 py-3.5 rounded-xl font-bold text-white bg-cyan-600 hover:bg-cyan-700 active:scale-95 transition-all text-lg shadow-md flex items-center justify-center gap-2 cursor-pointer">
+                <span>✔</span>
+                <span>對答案</span>
+            </button>
+
+            <button type="button" id="btn-next" onclick="nextQuestion()"
+                class="w-full sm:w-48 px-6 py-3.5 rounded-xl font-bold text-cyan-950 bg-cyan-100 border-2 border-cyan-300 hover:bg-cyan-200 active:scale-95 transition-all text-lg shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                <span>下一題</span>
+                <span>➔</span>
+            </button>
+        </footer>
+
+        <!-- 4. 作答紀錄與統計區 -->
+        <section class="bg-white border-2 border-slate-300 rounded-2xl shadow-sm overflow-hidden mt-6">
+            <!-- 紀錄標題與操作按鈕列 -->
+            <div class="bg-gradient-to-r from-cyan-50 to-sky-50 border-b border-slate-200 px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg">📋</span>
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800">作答紀錄</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="exportCSV()"
+                        class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-cyan-800 bg-white border border-cyan-300 hover:bg-cyan-50 active:scale-95 transition-all flex items-center gap-1 shadow-2xs cursor-pointer">
+                        <span>📥</span>
+                        <span>匯出紀錄 (CSV)</span>
+                    </button>
+                    <button type="button" id="btn-clear-history" onclick="requestClearHistory()"
+                        class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-red-600 bg-white border border-red-200 hover:bg-red-50 active:scale-95 transition-all flex items-center gap-1 shadow-2xs cursor-pointer">
+                        <span>🗑️</span>
+                        <span>清除紀錄</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 統計數據卡片列 -->
+            <div class="grid grid-cols-3 divide-x divide-slate-200 bg-slate-50/70 border-b border-slate-200 py-3 px-2 text-center">
+                <div>
+                    <div class="text-xs text-slate-500 font-medium">總作答次數</div>
+                    <div id="stat-total" class="math-font text-lg sm:text-xl font-extrabold text-slate-800 mt-0.5">0</div>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-500 font-medium">答對次數</div>
+                    <div id="stat-correct" class="math-font text-lg sm:text-xl font-extrabold text-emerald-600 mt-0.5">0</div>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-500 font-medium">答對率</div>
+                    <div id="stat-accuracy" class="math-font text-lg sm:text-xl font-extrabold text-cyan-700 mt-0.5">0%</div>
+                </div>
+            </div>
+
+            <!-- 作答紀錄表格 -->
+            <div class="overflow-x-auto max-h-80 overflow-y-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 sticky top-0 border-b border-slate-200 text-xs sm:text-sm text-slate-600">
+                        <tr>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold text-center w-14">次數</th>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold">題型</th>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold">題目</th>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold">你的答案</th>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold text-center">結果</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body" class="divide-y divide-slate-100 text-xs sm:text-sm">
+                        <tr>
+                            <td colspan="5" class="py-8 text-center text-slate-400 text-sm">
+                                尚未有作答紀錄，按下「對答案」後會自動記錄在這裡！
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /**
+         * 核心題庫（6 道基礎範例，完整覆蓋 NC-2-12-1 直接比較、間接比較、個別單位比較）：
+         * (1) 直接比較－倒水實驗（甲瓶裝滿倒入乙瓶，乙瓶還沒滿 -> 乙瓶較大）
+         * (2) 直接比較－同款透明杯水位（紅水壺、藍水壺分別倒入相同透明杯，紅水壺水位較高 -> 紅水壺較大）
+         * (3) 直接比較－倒水滿出來（甲水壺裝滿倒入乙水壺，水滿出來流到托盤 -> 甲水壺較大）
+         * (4) 間接比較－遞移推理（A > B 且 B > C -> 最大是 A，最小是 C）
+         * (5) 個別單位比較－數杯子（甲鍋 6 杯、乙鍋 9 杯 -> 乙鍋較大）
+         * (6) 個別單位比較－相差幾杯（甲果汁盒 4 杯、乙保溫瓶 7 杯 -> 多裝 3 杯，乙保溫瓶較大）
+         */
+        const presetQuestions = [
+            {
+                mode: 'direct_pour_space',
+                category: '直接比較－倒水實驗',
+                labelNo: 1,
+                sourceName: '甲瓶',
+                targetName: '乙瓶',
+                targetFillRatio: 0.62, // 乙瓶只裝到 62%，還有空間
+                questionText: '把裝滿水的「甲瓶」全部倒進空「乙瓶」裡，乙瓶沒有裝滿（還有空間）。哪一個容器的容量比較大？',
+                options: ['甲瓶', '乙瓶', '一樣大'],
+                correctOption: '乙瓶',
+                explanation: '甲瓶的水全部倒進乙瓶後，乙瓶還有空位，表示乙瓶能裝的水比甲瓶多，所以「乙瓶」容量比較大！'
+            },
+            {
+                mode: 'direct_same_cups',
+                category: '直接比較－同款透明杯水位',
+                labelNo: 2,
+                nameA: '紅水壺',
+                nameB: '藍水壺',
+                colorA: '#ef4444',
+                colorB: '#3b82f6',
+                levelA: 0.78, // 紅水壺水位較高
+                levelB: 0.48,
+                questionText: '把「紅水壺」和「藍水壺」裝滿水，分別倒進兩個「一樣大」的透明杯子裡。哪一個水壺的容量比較大？',
+                options: ['紅水壺', '藍水壺', '一樣大'],
+                correctOption: '紅水壺',
+                explanation: '倒進一樣大的杯子時，水位越高代表裝的水越多，所以「紅水壺」的容量比較大！'
+            },
+            {
+                mode: 'direct_pour_overflow',
+                category: '直接比較－倒水滿出來',
+                labelNo: 3,
+                sourceName: '甲水壺',
+                targetName: '乙水壺',
+                questionText: '把裝滿水的「甲水壺」倒進空「乙水壺」裡，乙水壺裝滿後水還流出來到盤子裡。哪一個水壺的容量比較大？',
+                options: ['甲水壺', '乙水壺', '一樣大'],
+                correctOption: '甲水壺',
+                explanation: '甲水壺的水把乙水壺裝滿後還有多出來（溢出來），表示甲水壺的水比較多，所以「甲水壺」容量比較大！'
+            },
+            {
+                mode: 'indirect_transitive',
+                category: '間接比較－遞移推理',
+                labelNo: 4,
+                items: [
+                    { id: 'A', label: 'A 容器', level: 0.85, color: '#0284c7' },
+                    { id: 'B', label: 'B 容器', level: 0.56, color: '#0d9488' },
+                    { id: 'C', label: 'C 容器', level: 0.30, color: '#6366f1' }
+                ],
+                relationText: 'A 容器的容量比 B 容器大，B 容器的容量比 C 容器大',
+                questionText: '已知「A 容器比 B 容器大」，而且「B 容器比 C 容器大」。請問哪一個容量「最大」，哪一個「最小」？',
+                choices: ['A 容器', 'B 容器', 'C 容器'],
+                correctMax: 'A 容器',
+                correctMin: 'C 容器',
+                explanation: '因為 A > B 且 B > C，排隊順序是 A > B > C，所以「A 容器」最大、「C 容器」最小！'
+            },
+            {
+                mode: 'unit_count_compare',
+                category: '個別單位比較－數杯子',
+                labelNo: 5,
+                nameA: '甲鍋',
+                nameB: '乙鍋',
+                cupsA: 6,
+                cupsB: 9,
+                unitName: '小杯子',
+                questionText: '用一樣大的小杯子裝水，數數看甲鍋和乙鍋各裝滿幾杯水，並選出容量比較大的鍋子：',
+                correctLarger: '乙鍋',
+                explanation: '甲鍋裝滿是 6 杯水，乙鍋裝滿是 9 杯水，9 杯比 6 杯多，所以「乙鍋」的容量比較大！'
+            },
+            {
+                mode: 'unit_diff_compare',
+                category: '個別單位比較－相差幾杯',
+                labelNo: 6,
+                nameA: '甲果汁盒',
+                nameB: '乙保溫瓶',
+                cupsA: 4,
+                cupsB: 7,
+                diff: 3,
+                largerName: '乙保溫瓶',
+                smallerName: '甲果汁盒',
+                questionText: '用相同的小杯子測量，甲果汁盒可裝滿 4 杯水，乙保溫瓶可裝滿 7 杯水。請填寫相差杯數並選出較大的容器：',
+                explanation: '7 − 4 = 3，乙保溫瓶比甲果汁盒多裝 3 杯水，所以「乙保溫瓶」的容量比較大！'
+            }
+        ];
+
+        const STORAGE_KEY = 'nc_2_12_1_capacity_records';
+
+        let currentIndex = 0;
+        let currentQuestion = Object.assign({}, presetQuestions[0]);
+        let solvedCount = 0;
+        let attemptHistory = [];
+        let showVisualHint = false;
+        let isCurrentSolved = false;
+        let confirmClearTimeout = null;
+
+        // 儲存選擇題型態的目前點選狀態
+        let selectedOption = '';
+        let selectedMax = '';
+        let selectedMin = '';
+        let selectedLarger = '';
+
+        /**
+         * 第 7 題起產生隨機題目（輪流涵蓋直接比較、間接比較、個別單位比較）
+         */
+        function generateRandomQuestion(index) {
+            const labelNo = index + 1;
+            const cycleType = (index - presetQuestions.length) % 4;
+
+            const containerPairs = [
+                { a: '大水瓶', b: '小水瓶' },
+                { a: '紅杯子', b: '綠杯子' },
+                { a: '甲水壺', b: '乙水壺' },
+                { a: 'A 茶壺', b: 'B 茶壺' },
+                { a: '黃水桶', b: '藍水桶' }
+            ];
+            const pair = containerPairs[Math.floor(Math.random() * containerPairs.length)];
+
+            if (cycleType === 0) {
+                // 隨機直接比較：倒水實驗（沒裝滿 vs 滿出來）
+                const isOverflow = Math.random() < 0.5;
+                if (isOverflow) {
+                    return {
+                        mode: 'direct_pour_overflow',
+                        category: '直接比較－倒水滿出來',
+                        labelNo,
+                        sourceName: pair.a,
+                        targetName: pair.b,
+                        questionText: `把裝滿水的「${pair.a}」倒進空「${pair.b}」裡，${pair.b}裝滿後水還滿出來到托盤裡。哪一個容量比較大？`,
+                        options: [pair.a, pair.b, '一樣大'],
+                        correctOption: pair.a,
+                        explanation: `${pair.a}的水把${pair.b}裝滿後還溢出來，代表${pair.a}的水較多，所以「${pair.a}」容量比較大！`
+                    };
+                } else {
+                    const ratio = (Math.floor(Math.random() * 3) + 4) / 10; // 0.4 ~ 0.6
+                    return {
+                        mode: 'direct_pour_space',
+                        category: '直接比較－倒水實驗',
+                        labelNo,
+                        sourceName: pair.a,
+                        targetName: pair.b,
+                        targetFillRatio: ratio,
+                        questionText: `把裝滿水的「${pair.a}」全部倒進空「${pair.b}」裡，${pair.b}沒有裝滿（還有空位）。哪一個容量比較大？`,
+                        options: [pair.a, pair.b, '一樣大'],
+                        correctOption: pair.b,
+                        explanation: `${pair.a}的水倒進${pair.b}後還沒裝滿，代表${pair.b}還能裝更多水，所以「${pair.b}」容量比較大！`
+                    };
+                }
+            } else if (cycleType === 1) {
+                // 隨機直接比較：同款透明杯水位
+                const aHigher = Math.random() < 0.5;
+                const highLvl = (Math.floor(Math.random() * 2) + 7) / 10; // 0.7 ~ 0.8
+                const lowLvl = (Math.floor(Math.random() * 2) + 3) / 10;  // 0.3 ~ 0.4
+                const larger = aHigher ? pair.a : pair.b;
+                return {
+                    mode: 'direct_same_cups',
+                    category: '直接比較－同款透明杯水位',
+                    labelNo,
+                    nameA: pair.a,
+                    nameB: pair.b,
+                    colorA: '#0284c7',
+                    colorB: '#f59e0b',
+                    levelA: aHigher ? highLvl : lowLvl,
+                    levelB: aHigher ? lowLvl : highLvl,
+                    questionText: `把「${pair.a}」和「${pair.b}」裝滿水，分別倒進兩個「一樣大」的透明杯子裡。哪一個容量比較大？`,
+                    options: [pair.a, pair.b, '一樣大'],
+                    correctOption: larger,
+                    explanation: `倒進相同大小的杯子時，水位越高代表容量越大，所以「${larger}」比較大！`
+                };
+            } else if (cycleType === 2) {
+                // 隨機間接比較：遞移推理
+                const triples = [
+                    ['甲杯', '乙杯', '丙杯'],
+                    ['紅壺', '黃壺', '藍壺'],
+                    ['A 瓶', 'B 瓶', 'C 瓶']
+                ];
+                const chosen = triples[Math.floor(Math.random() * triples.length)];
+                // 打亂大小順序
+                const shuffled = [...chosen].sort(() => Math.random() - 0.5);
+                const maxItem = shuffled[0];
+                const midItem = shuffled[1];
+                const minItem = shuffled[2];
+
+                const levelMap = {};
+                levelMap[maxItem] = 0.85;
+                levelMap[midItem] = 0.55;
+                levelMap[minItem] = 0.28;
+
+                const colors = ['#0284c7', '#0d9488', '#6366f1'];
+                const items = chosen.map((name, idx) => ({
+                    id: name,
+                    label: name,
+                    level: levelMap[name],
+                    color: colors[idx]
+                }));
+
+                return {
+                    mode: 'indirect_transitive',
+                    category: '間接比較－遞移推理',
+                    labelNo,
+                    items,
+                    relationText: `${maxItem}比${midItem}大，${midItem}比${minItem}大`,
+                    questionText: `已知「${maxItem}的容量比${midItem}大」，而且「${midItem}的容量比${minItem}大」。請問哪一個「最大」，哪一個「最小」？`,
+                    choices: chosen,
+                    correctMax: maxItem,
+                    correctMin: minItem,
+                    explanation: `因為 ${maxItem} > ${midItem} 且 ${midItem} > ${minItem}，所以「${maxItem}」最大、「${minItem}」最小！`
+                };
+            } else {
+                // 隨機個別單位比較（數杯子或相差幾杯，杯數 3 ~ 12）
+                let cupsA = Math.floor(Math.random() * 8) + 3; // 3 ~ 10
+                let cupsB = Math.floor(Math.random() * 8) + 3;
+                while (cupsA === cupsB) {
+                    cupsB = Math.floor(Math.random() * 8) + 3;
+                }
+                const larger = cupsA > cupsB ? pair.a : pair.b;
+                const smaller = cupsA > cupsB ? pair.b : pair.a;
+                const diff = Math.abs(cupsA - cupsB);
+
+                if (Math.random() < 0.5) {
+                    return {
+                        mode: 'unit_count_compare',
+                        category: '個別單位比較－數杯子',
+                        labelNo,
+                        nameA: pair.a,
+                        nameB: pair.b,
+                        cupsA,
+                        cupsB,
+                        unitName: '小杯子',
+                        questionText: `用一樣大的小杯子裝水，數數看「${pair.a}」和「${pair.b}」各裝滿幾杯水，並選出容量比較大的容器：`,
+                        correctLarger: larger,
+                        explanation: `${pair.a}裝滿是 ${cupsA} 杯水，${pair.b}裝滿是 ${cupsB} 杯水，所以「${larger}」的容量比較大！`
+                    };
+                } else {
+                    return {
+                        mode: 'unit_diff_compare',
+                        category: '個別單位比較－相差幾杯',
+                        labelNo,
+                        nameA: pair.a,
+                        nameB: pair.b,
+                        cupsA,
+                        cupsB,
+                        diff,
+                        largerName: larger,
+                        smallerName: smaller,
+                        questionText: `用相同的小杯子測量，${pair.a}可裝滿 ${cupsA} 杯水，${pair.b}可裝滿 ${cupsB} 杯水。請填寫相差杯數並選出較大的容器：`,
+                        explanation: `${Math.max(cupsA, cupsB)} − ${Math.min(cupsA, cupsB)} = ${diff}，${larger}比${smaller}多裝 ${diff} 杯水，所以「${larger}」容量比較大！`
+                    };
+                }
+            }
+        }
+
+        /**
+         * 動態繪製各題型的高解析度 SVG 實驗圖示
+         */
+        function renderCapacitySVG(q) {
+            const svg = document.getElementById('capacity-svg');
+            if (!svg) return;
+
+            let parts = [];
+
+            if (q.mode === 'direct_pour_space') {
+                // 圖示：左邊甲瓶已倒空（傾斜），右邊乙瓶裝了部分水（上方留有明顯空位）
+                const cupX = 275, cupY = 45, cupW = 90, cupH = 135;
+                const waterH = Math.round(cupH * q.targetFillRatio);
+                const waterY = cupY + (cupH - waterH);
+
+                // 桌面線
+                parts.push(`<line x1="30" y1="190" x2="430" y2="190" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" />`);
+
+                // 左側傾斜的來源容器（已倒空）
+                parts.push(`
+                    <g transform="translate(135, 95) rotate(55)">
+                        <rect x="-26" y="-45" width="52" height="90" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="3" />
+                        <rect x="-14" y="-60" width="28" height="16" rx="4" fill="#e2e8f0" stroke="#475569" stroke-width="3" />
+                        <text x="0" y="5" text-anchor="middle" font-size="13" font-weight="800" fill="#475569" transform="rotate(-55)">已倒光</text>
+                    </g>
+                `);
+                parts.push(`<text x="115" y="175" text-anchor="middle" font-size="15" font-weight="800" fill="#1e293b">${q.sourceName}</text>`);
+
+                // 倒水弧線與箭頭
+                parts.push(`
+                    <path d="M 185 88 Q 235 80 265 110" fill="none" stroke="#06b6d4" stroke-width="4" stroke-dasharray="6 4" />
+                    <polygon points="268,114 256,111 264,101" fill="#06b6d4" />
+                    <text x="225" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#0891b2">全部倒入</text>
+                `);
+
+                // 右側目標容器（較大，水未滿）
+                parts.push(`<rect x="${cupX}" y="${waterY}" width="${cupW}" height="${waterH}" rx="4" fill="#38bdf8" fill-opacity="0.65" />`);
+                parts.push(`<line x1="${cupX}" y1="${waterY}" x2="${cupX + cupW}" y2="${waterY}" stroke="#0284c7" stroke-width="3" />`);
+                parts.push(`<rect x="${cupX}" y="${cupY}" width="${cupW}" height="${cupH}" rx="8" fill="none" stroke="#1e293b" stroke-width="3.5" />`);
+                parts.push(`<text x="${cupX + cupW / 2}" y="208" text-anchor="middle" font-size="15" font-weight="800" fill="#1e293b">${q.targetName}</text>`);
+
+                // 上方空白區域標註
+                const emptyMidY = cupY + (cupH - waterH) / 2;
+                parts.push(`
+                    <text x="${cupX + cupW / 2}" y="${emptyMidY + 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#64748b">還有空間（沒滿）</text>
+                `);
+
+                if (showVisualHint) {
+                    parts.push(`
+                        <rect x="25" y="10" width="410" height="28" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5" />
+                        <text x="230" y="29" text-anchor="middle" font-size="13" font-weight="800" fill="#92400e">
+                            💡 小提示：${q.sourceName}的水放進${q.targetName}只裝了一部分，代表${q.targetName}比較大！
+                        </text>
+                    `);
+                }
+            } else if (q.mode === 'direct_same_cups') {
+                // 圖示：兩個一樣大的透明刻度杯，分別裝著兩個水壺倒出來的水
+                parts.push(`<line x1="30" y1="192" x2="430" y2="192" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" />`);
+
+                const cupW = 86, cupH = 128, cupY = 48;
+                const leftX = 105, rightX = 270;
+
+                const waterHA = Math.round(cupH * q.levelA);
+                const waterYA = cupY + (cupH - waterHA);
+                const waterHB = Math.round(cupH * q.levelB);
+                const waterYB = cupY + (cupH - waterHB);
+
+                // 左杯 (A)
+                parts.push(`<rect x="${leftX}" y="${waterYA}" width="${cupW}" height="${waterHA}" rx="3" fill="${q.colorA}" fill-opacity="0.55" />`);
+                parts.push(`<line x1="${leftX}" y1="${waterYA}" x2="${leftX + cupW}" y2="${waterYA}" stroke="${q.colorA}" stroke-width="3" />`);
+                parts.push(`<rect x="${leftX}" y="${cupY}" width="${cupW}" height="${cupH}" rx="8" fill="none" stroke="#1e293b" stroke-width="3.5" />`);
+                parts.push(`<text x="${leftX + cupW / 2}" y="210" text-anchor="middle" font-size="15" font-weight="800" fill="#1e293b">${q.nameA}的水</text>`);
+
+                // 右杯 (B)
+                parts.push(`<rect x="${rightX}" y="${waterYB}" width="${cupW}" height="${waterHB}" rx="3" fill="${q.colorB}" fill-opacity="0.55" />`);
+                parts.push(`<line x1="${rightX}" y1="${waterYB}" x2="${rightX + cupW}" y2="${waterYB}" stroke="${q.colorB}" stroke-width="3" />`);
+                parts.push(`<rect x="${rightX}" y="${cupY}" width="${cupW}" height="${cupH}" rx="8" fill="none" stroke="#1e293b" stroke-width="3.5" />`);
+                parts.push(`<text x="${rightX + cupW / 2}" y="210" text-anchor="middle" font-size="15" font-weight="800" fill="#1e293b">${q.nameB}的水</text>`);
+
+                // 兩杯中間標示「一樣大的透明杯」
+                parts.push(`
+                    <rect x="198" y="96" width="64" height="36" rx="8" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5" />
+                    <text x="230" y="112" text-anchor="middle" font-size="11" font-weight="800" fill="#0369a1">一樣大的</text>
+                    <text x="230" y="126" text-anchor="middle" font-size="11" font-weight="800" fill="#0369a1">透明杯</text>
+                `);
+
+                // 刻度線
+                [0.25, 0.5, 0.75].forEach(r => {
+                    const tickY = cupY + cupH * (1 - r);
+                    parts.push(`<line x1="${leftX}" y1="${tickY}" x2="${leftX + 12}" y2="${tickY}" stroke="#475569" stroke-width="2" />`);
+                    parts.push(`<line x1="${rightX}" y1="${tickY}" x2="${rightX + 12}" y2="${tickY}" stroke="#475569" stroke-width="2" />`);
+                });
+
+                if (showVisualHint) {
+                    const highY = Math.min(waterYA, waterYB);
+                    parts.push(`
+                        <line x1="85" y1="${highY}" x2="375" y2="${highY}" stroke="#e11d48" stroke-width="2.5" stroke-dasharray="6 4" />
+                        <rect x="125" y="10" width="210" height="26" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5" />
+                        <text x="230" y="28" text-anchor="middle" font-size="13" font-weight="800" fill="#92400e">
+                            💡 紅色虛線：水位較高的一邊容量大！
+                        </text>
+                    `);
+                }
+            } else if (q.mode === 'direct_pour_overflow') {
+                // 圖示：來源容器倒入目標容器，目標容器滿出來並滴落到下方托盤水窪
+                parts.push(`<line x1="30" y1="194" x2="430" y2="194" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" />`);
+
+                // 左側傾斜來源容器
+                parts.push(`
+                    <g transform="translate(125, 85) rotate(55)">
+                        <rect x="-26" y="-45" width="52" height="90" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="3" />
+                        <rect x="-14" y="-60" width="28" height="16" rx="4" fill="#e2e8f0" stroke="#475569" stroke-width="3" />
+                    </g>
+                    <text x="105" y="175" text-anchor="middle" font-size="15" font-weight="800" fill="#1e293b">${q.sourceName}</text>
+                `);
+
+                // 倒水箭頭
+                parts.push(`
+                    <path d="M 178 78 Q 225 68 258 92" fill="none" stroke="#06b6d4" stroke-width="4" stroke-dasharray="6 4" />
+                    <polygon points="262,96 250,94 257,84" fill="#06b6d4" />
+                `);
+
+                // 下方承接托盤與溢出的水
+                const cupX = 275, cupY = 72, cupW = 76, cupH = 104;
+                parts.push(`<rect x="242" y="176" width="142" height="14" rx="5" fill="#cbd5e1" stroke="#475569" stroke-width="2" />`);
+                parts.push(`<ellipse cx="313" cy="175" rx="60" ry="6" fill="#38bdf8" />`);
+
+                // 溢出的水滴與水流
+                parts.push(`
+                    <path d="M ${cupX} ${cupY + 4} Q ${cupX - 14} 115 ${cupX - 10} 170" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" />
+                    <path d="M ${cupX + cupW} ${cupY + 4} Q ${cupX + cupW + 14} 115 ${cupX + cupW + 10} 170" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" />
+                `);
+
+                // 目標容器（100% 全滿）
+                parts.push(`<rect x="${cupX}" y="${cupY}" width="${cupW}" height="${cupH}" rx="6" fill="#38bdf8" fill-opacity="0.75" />`);
+                parts.push(`<rect x="${cupX}" y="${cupY}" width="${cupW}" height="${cupH}" rx="6" fill="none" stroke="#1e293b" stroke-width="3.5" />`);
+                parts.push(`<text x="${cupX + cupW / 2}" y="${cupY + 55}" text-anchor="middle" font-size="13" font-weight="900" fill="#0f172a">裝滿還</text>`);
+                parts.push(`<text x="${cupX + cupW / 2}" y="${cupY + 73}" text-anchor="middle" font-size="13" font-weight="900" fill="#0f172a">滿出來！</text>`);
+                parts.push(`<text x="${cupX + cupW / 2}" y="210" text-anchor="middle" font-size="15" font-weight="800" fill="#1e293b">${q.targetName}</text>`);
+
+                if (showVisualHint) {
+                    parts.push(`
+                        <rect x="25" y="10" width="410" height="28" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5" />
+                        <text x="230" y="29" text-anchor="middle" font-size="13" font-weight="800" fill="#92400e">
+                            💡 小提示：${q.targetName}裝不下全部的水而滿出來，代表${q.sourceName}的水比較多！
+                        </text>
+                    `);
+                }
+            } else if (q.mode === 'indirect_transitive') {
+                // 圖示：三個容器與文字關係卡（間接比較推理）
+                parts.push(`
+                    <rect x="30" y="14" width="400" height="34" rx="10" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5" />
+                    <text x="230" y="36" text-anchor="middle" font-size="14" font-weight="800" fill="#0369a1">
+                        關係線索：${q.relationText}
+                    </text>
+                `);
+
+                parts.push(`<line x1="30" y1="186" x2="430" y2="186" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" />`);
+
+                const positions = [95, 230, 365];
+                q.items.forEach((item, idx) => {
+                    const cx = positions[idx];
+                    const w = 68, h = 105, y = 66;
+                    // 若未開啟小提示，三個容器外型畫成一樣大小（神祕箱概念），開啟小提示時才顯示實際水量高度
+                    const displayRatio = showVisualHint ? item.level : 0.5;
+                    const wh = Math.round(h * displayRatio);
+                    const wy = y + (h - wh);
+
+                    parts.push(`<rect x="${cx - w / 2}" y="${wy}" width="${w}" height="${wh}" rx="4" fill="${item.color}" fill-opacity="${showVisualHint ? '0.65' : '0.22'}" />`);
+                    parts.push(`<rect x="${cx - w / 2}" y="${y}" width="${w}" height="${h}" rx="8" fill="none" stroke="#1e293b" stroke-width="3" />`);
+                    parts.push(`<text x="${cx}" y="${y + 56}" text-anchor="middle" font-size="18" font-weight="900" fill="#1e293b">${showVisualHint ? Math.round(item.level * 100) + '%' : '？'}</text>`);
+                    parts.push(`<text x="${cx}" y="206" text-anchor="middle" font-size="15" font-weight="800" fill="#1e293b">${item.label}</text>`);
+                });
+
+                if (showVisualHint) {
+                    parts.push(`
+                        <text x="230" y="59" text-anchor="middle" font-size="12" font-weight="800" fill="#b45309">
+                            💡 小提示：已幫你把水量高低透視出來囉！排排看誰最高、誰最低！
+                        </text>
+                    `);
+                }
+            } else if (q.mode === 'unit_count_compare' || q.mode === 'unit_diff_compare') {
+                // 圖示：上下兩排小杯子，讓學生視覺化點數幾杯水
+                const drawCupRow = (label, count, rowY, fillCol, strokeCol) => {
+                    parts.push(`
+                        <rect x="14" y="${rowY + 6}" width="84" height="32" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5" />
+                        <text x="56" y="${rowY + 27}" text-anchor="middle" font-size="13" font-weight="800" fill="#1e293b">${label}</text>
+                    `);
+
+                    const startX = 110;
+                    const maxCols = 10;
+                    const cupW = 24;
+                    const cupH = 30;
+                    const gap = 8;
+
+                    for (let i = 0; i < count; i++) {
+                        const col = i % maxCols;
+                        const extraRowOffset = Math.floor(i / maxCols) * 36;
+                        const x = startX + col * (cupW + gap);
+                        const y = rowY + 6 + extraRowOffset;
+
+                        // 小杯子水與外框
+                        parts.push(`<rect x="${x + 2}" y="${y + 7}" width="${cupW - 4}" height="${cupH - 9}" rx="2" fill="${fillCol}" fill-opacity="0.7" />`);
+                        parts.push(`<rect x="${x}" y="${y}" width="${cupW}" height="${cupH}" rx="4" fill="none" stroke="${strokeCol}" stroke-width="2.2" />`);
+
+                        if (showVisualHint) {
+                            parts.push(`<text x="${x + cupW / 2}" y="${y + 21}" text-anchor="middle" font-size="11" font-weight="900" fill="#0f172a">${i + 1}</text>`);
+                        }
+                    }
+                };
+
+                drawCupRow(q.nameA, q.cupsA, 22, '#38bdf8', '#0284c7');
+                parts.push(`<line x1="16" y1="110" x2="444" y2="110" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="5 5" />`);
+                drawCupRow(q.nameB, q.cupsB, 120, '#34d399', '#059669');
+
+                if (showVisualHint) {
+                    parts.push(`
+                        <text x="230" y="210" text-anchor="middle" font-size="12" font-weight="800" fill="#b45309">
+                            💡 小提示：小杯子上已經標出數字 1、2、3... 囉！數數看各有幾杯！
+                        </text>
+                    `);
+                }
+            }
+
+            svg.innerHTML = parts.join('');
+        }
+
+        /**
+         * 切換顯示／隱藏容量比較小提示
+         */
+        function toggleVisualHint() {
+            showVisualHint = !showVisualHint;
+            const btnText = document.getElementById('hint-btn-text');
+            if (btnText) {
+                btnText.textContent = showVisualHint ? '隱藏容量比較小提示' : '顯示容量比較小提示';
+            }
+            renderCapacitySVG(currentQuestion);
+        }
+
+        /**
+         * 載入指定題號的題目
+         */
+        function loadQuestion(index) {
+            currentIndex = index;
+            isCurrentSolved = false;
+            selectedOption = '';
+            selectedMax = '';
+            selectedMin = '';
+            selectedLarger = '';
+
+            const progressBadge = document.getElementById('progress-badge');
+            const numBadge = document.getElementById('question-number-badge');
+            const catBadge = document.getElementById('category-badge');
+            const feedbackBox = document.getElementById('feedback-box');
+
+            if (index < presetQuestions.length) {
+                currentQuestion = Object.assign({}, presetQuestions[index]);
+                if (progressBadge) {
+                    progressBadge.textContent = `基礎範例：第 ${index + 1} 題 / 共 ${presetQuestions.length} 題`;
+                }
+            } else {
+                currentQuestion = generateRandomQuestion(index);
+                if (progressBadge) {
+                    progressBadge.textContent = `隨機挑戰：第 ${index + 1} 題（已答對 ${solvedCount} 題）`;
+                }
+            }
+
+            if (numBadge) {
+                numBadge.textContent = `(${currentQuestion.labelNo})`;
+            }
+
+            if (catBadge) {
+                catBadge.textContent = currentQuestion.category;
+                if (currentQuestion.category.startsWith('直接比較')) {
+                    catBadge.className = 'px-3 py-1 rounded-lg text-xs sm:text-sm font-extrabold bg-cyan-600 text-white shadow-2xs';
+                } else if (currentQuestion.category.startsWith('間接比較')) {
+                    catBadge.className = 'px-3 py-1 rounded-lg text-xs sm:text-sm font-extrabold bg-teal-600 text-white shadow-2xs';
+                } else {
+                    catBadge.className = 'px-3 py-1 rounded-lg text-xs sm:text-sm font-extrabold bg-sky-600 text-white shadow-2xs';
+                }
+            }
+
+            renderCapacitySVG(currentQuestion);
+            renderQuestionArea(currentQuestion);
+
+            if (feedbackBox) {
+                feedbackBox.innerHTML = `<p class="text-slate-400 text-sm text-center">請選擇或填寫答案後，按 Enter 鍵或點擊下方「對答案」按鈕</p>`;
+            }
+        }
+
+        /**
+         * 渲染不同題型的文字與作答介面
+         */
+        function renderQuestionArea(q) {
+            const area = document.getElementById('question-content-area');
+            if (!area) return;
+
+            const inputClass = 'ans-input math-font text-center text-xl sm:text-2xl font-extrabold text-cyan-900 bg-cyan-50/60 border-2 border-slate-300 rounded-xl focus:outline-none focus:border-cyan-600 focus:ring-4 focus:ring-cyan-500/20 focus:bg-white transition-all py-1.5 px-2.5 w-20 sm:w-24';
+
+            let html = '';
+
+            if (q.mode === 'direct_pour_space' || q.mode === 'direct_same_cups' || q.mode === 'direct_pour_overflow') {
+                // 單選按鈕卡片題型
+                html = `
+                    <p class="text-center text-slate-800 leading-relaxed max-w-xl">
+                        <span class="math-font text-cyan-700 mr-1">(${q.labelNo})</span>${q.questionText}
+                    </p>
+                    <div class="flex flex-wrap items-center justify-center gap-3 mt-1">
+                        ${q.options.map(opt => `
+                            <button type="button" data-opt="${opt}" onclick="selectSingleOption('${opt}')"
+                                class="choice-btn px-5 py-3 rounded-xl text-base sm:text-lg font-extrabold border-2 border-slate-300 bg-slate-50 text-slate-800 hover:border-cyan-500 hover:bg-cyan-50 active:scale-95 transition-all cursor-pointer min-w-[6.5rem]">
+                                ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (q.mode === 'indirect_transitive') {
+                // 間接比較：分別點選「最大」與「最小」
+                html = `
+                    <p class="text-center text-slate-800 leading-relaxed max-w-xl">
+                        <span class="math-font text-cyan-700 mr-1">(${q.labelNo})</span>${q.questionText}
+                    </p>
+                    <div class="w-full max-w-lg bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3.5">
+                        <div class="flex flex-wrap items-center justify-center gap-2">
+                            <span class="text-sm sm:text-base font-extrabold text-rose-700 bg-rose-100 px-2.5 py-1 rounded-lg">容量最大：</span>
+                            ${q.choices.map(c => `
+                                <button type="button" data-max="${c}" onclick="selectMaxChoice('${c}')"
+                                    class="max-btn px-3.5 py-2 rounded-xl text-sm sm:text-base font-bold border-2 border-slate-300 bg-white text-slate-800 hover:border-rose-400 active:scale-95 transition-all cursor-pointer">
+                                    ${c}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div class="flex flex-wrap items-center justify-center gap-2">
+                            <span class="text-sm sm:text-base font-extrabold text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded-lg">容量最小：</span>
+                            ${q.choices.map(c => `
+                                <button type="button" data-min="${c}" onclick="selectMinChoice('${c}')"
+                                    class="min-btn px-3.5 py-2 rounded-xl text-sm sm:text-base font-bold border-2 border-slate-300 bg-white text-slate-800 hover:border-indigo-400 active:scale-95 transition-all cursor-pointer">
+                                    ${c}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (q.mode === 'unit_count_compare') {
+                // 個別單位比較：填寫兩容器杯數 + 選出較大容器
+                html = `
+                    <p class="text-center text-slate-800 leading-relaxed max-w-xl">
+                        <span class="math-font text-cyan-700 mr-1">(${q.labelNo})</span>${q.questionText}
+                    </p>
+                    <div class="w-full max-w-xl bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 text-base sm:text-xl leading-loose text-center space-y-3">
+                        <div>
+                            <span class="font-extrabold text-cyan-800">${q.nameA}</span> 裝滿是
+                            <input type="text" id="ans-0" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="${q.nameA}杯數"
+                                class="${inputClass} inline-block mx-1 align-middle" />
+                            杯水，
+                            <span class="font-extrabold text-emerald-800">${q.nameB}</span> 裝滿是
+                            <input type="text" id="ans-1" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="${q.nameB}杯數"
+                                class="${inputClass} inline-block mx-1 align-middle" />
+                            杯水，
+                        </div>
+                        <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
+                            <span>所以</span>
+                            ${[q.nameA, q.nameB].map(name => `
+                                <button type="button" data-larger="${name}" onclick="selectLargerChoice('${name}')"
+                                    class="larger-btn px-4 py-1.5 rounded-xl text-base sm:text-lg font-extrabold border-2 border-slate-300 bg-white text-slate-800 hover:border-cyan-500 active:scale-95 transition-all cursor-pointer">
+                                    ${name}
+                                </button>
+                            `).join('')}
+                            <span>的容量比較大。</span>
+                        </div>
+                    </div>
+                `;
+            } else if (q.mode === 'unit_diff_compare') {
+                // 個別單位比較：填寫相差幾杯 + 選出較大容器
+                html = `
+                    <p class="text-center text-slate-800 leading-relaxed max-w-xl">
+                        <span class="math-font text-cyan-700 mr-1">(${q.labelNo})</span>${q.questionText}
+                    </p>
+                    <div class="w-full max-w-xl bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 text-base sm:text-xl leading-loose text-center space-y-3">
+                        <div>
+                            <span class="font-extrabold text-emerald-800">${q.largerName}</span> 比
+                            <span class="font-extrabold text-cyan-800">${q.smallerName}</span> 多裝
+                            <input type="text" id="ans-0" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="多裝幾杯水"
+                                class="${inputClass} inline-block mx-1 align-middle" />
+                            杯水，
+                        </div>
+                        <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
+                            <span>所以</span>
+                            ${[q.nameA, q.nameB].map(name => `
+                                <button type="button" data-larger="${name}" onclick="selectLargerChoice('${name}')"
+                                    class="larger-btn px-4 py-1.5 rounded-xl text-base sm:text-lg font-extrabold border-2 border-slate-300 bg-white text-slate-800 hover:border-cyan-500 active:scale-95 transition-all cursor-pointer">
+                                    ${name}
+                                </button>
+                            `).join('')}
+                            <span>的容量比較大。</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            area.innerHTML = html;
+
+            // 綁定輸入框數字過濾與鍵盤操作
+            const inputs = Array.from(area.querySelectorAll('.ans-input'));
+            inputs.forEach((inp, idx) => {
+                inp.addEventListener('input', () => {
+                    inp.classList.remove('border-red-500', 'bg-red-50', 'text-red-700', 'border-amber-400', 'bg-amber-50', 'border-emerald-500', 'bg-emerald-50');
+                    inp.classList.add('border-slate-300', 'bg-cyan-50/60', 'text-cyan-900');
+                    inp.value = inp.value.replace(/[^0-9]/g, '');
+                });
+                inp.addEventListener('focus', () => inp.select());
+                inp.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (idx < inputs.length - 1 && inputs[idx + 1].value.trim() === '') {
+                            inputs[idx + 1].focus();
+                        } else if (isCurrentSolved) {
+                            nextQuestion();
+                        } else {
+                            checkAnswer();
+                        }
+                    }
+                });
+            });
+
+            if (inputs[0]) {
+                inputs[0].focus();
+            }
+        }
+
+        /* ================= 選項點選控制 ================= */
+
+        function selectSingleOption(opt) {
+            selectedOption = opt;
+            document.querySelectorAll('.choice-btn').forEach(btn => {
+                if (btn.dataset.opt === opt) {
+                    btn.className = 'choice-btn px-5 py-3 rounded-xl text-base sm:text-lg font-extrabold border-2 border-cyan-600 bg-cyan-600 text-white shadow-sm scale-105 transition-all cursor-pointer min-w-[6.5rem]';
+                } else {
+                    btn.className = 'choice-btn px-5 py-3 rounded-xl text-base sm:text-lg font-extrabold border-2 border-slate-300 bg-slate-50 text-slate-800 hover:border-cyan-500 hover:bg-cyan-50 active:scale-95 transition-all cursor-pointer min-w-[6.5rem]';
+                }
+            });
+        }
+
+        function selectMaxChoice(val) {
+            selectedMax = val;
+            document.querySelectorAll('.max-btn').forEach(btn => {
+                if (btn.dataset.max === val) {
+                    btn.className = 'max-btn px-3.5 py-2 rounded-xl text-sm sm:text-base font-extrabold border-2 border-rose-600 bg-rose-600 text-white shadow-2xs transition-all cursor-pointer';
+                } else {
+                    btn.className = 'max-btn px-3.5 py-2 rounded-xl text-sm sm:text-base font-bold border-2 border-slate-300 bg-white text-slate-800 hover:border-rose-400 active:scale-95 transition-all cursor-pointer';
+                }
+            });
+        }
+
+        function selectMinChoice(val) {
+            selectedMin = val;
+            document.querySelectorAll('.min-btn').forEach(btn => {
+                if (btn.dataset.min === val) {
+                    btn.className = 'min-btn px-3.5 py-2 rounded-xl text-sm sm:text-base font-extrabold border-2 border-indigo-600 bg-indigo-600 text-white shadow-2xs transition-all cursor-pointer';
+                } else {
+                    btn.className = 'min-btn px-3.5 py-2 rounded-xl text-sm sm:text-base font-bold border-2 border-slate-300 bg-white text-slate-800 hover:border-indigo-400 active:scale-95 transition-all cursor-pointer';
+                }
+            });
+        }
+
+        function selectLargerChoice(val) {
+            selectedLarger = val;
+            document.querySelectorAll('.larger-btn').forEach(btn => {
+                if (btn.dataset.larger === val) {
+                    btn.className = 'larger-btn px-4 py-1.5 rounded-xl text-base sm:text-lg font-extrabold border-2 border-cyan-600 bg-cyan-600 text-white shadow-2xs transition-all cursor-pointer';
+                } else {
+                    btn.className = 'larger-btn px-4 py-1.5 rounded-xl text-base sm:text-lg font-extrabold border-2 border-slate-300 bg-white text-slate-800 hover:border-cyan-500 active:scale-95 transition-all cursor-pointer';
+                }
+            });
+        }
+
+        /**
+         * 對答案邏輯
+         */
+        function checkAnswer() {
+            const feedbackBox = document.getElementById('feedback-box');
+            if (!feedbackBox) return;
+
+            const q = currentQuestion;
+            let isCorrect = false;
+            let userAnswerDisplay = '';
+            let correctAnswerDisplay = '';
+
+            if (q.mode === 'direct_pour_space' || q.mode === 'direct_same_cups' || q.mode === 'direct_pour_overflow') {
+                if (!selectedOption) {
+                    showWarning('⚠️ 請先點選一個答案按鈕再按「對答案」喔！');
+                    return;
+                }
+                isCorrect = selectedOption === q.correctOption;
+                userAnswerDisplay = selectedOption;
+                correctAnswerDisplay = q.correctOption;
+            } else if (q.mode === 'indirect_transitive') {
+                if (!selectedMax || !selectedMin) {
+                    showWarning('⚠️ 請分別選出「容量最大」和「容量最小」的容器喔！');
+                    return;
+                }
+                isCorrect = (selectedMax === q.correctMax) && (selectedMin === q.correctMin);
+                userAnswerDisplay = `最大：${selectedMax} / 最小：${selectedMin}`;
+                correctAnswerDisplay = `最大：${q.correctMax} / 最小：${q.correctMin}`;
+            } else if (q.mode === 'unit_count_compare') {
+                const inp0 = document.getElementById('ans-0');
+                const inp1 = document.getElementById('ans-1');
+                if (!inp0 || !inp1 || inp0.value.trim() === '' || inp1.value.trim() === '' || !selectedLarger) {
+                    showWarning('⚠️ 請把兩個杯數都填好，並點選哪一個容器容量比較大喔！');
+                    return;
+                }
+                const val0 = Number(inp0.value.trim());
+                const val1 = Number(inp1.value.trim());
+                const ok0 = val0 === q.cupsA;
+                const ok1 = val1 === q.cupsB;
+                const okChoice = selectedLarger === q.correctLarger;
+
+                markInputResult(inp0, ok0);
+                markInputResult(inp1, ok1);
+
+                isCorrect = ok0 && ok1 && okChoice;
+                userAnswerDisplay = `${q.nameA} ${val0} 杯、${q.nameB} ${val1} 杯（${selectedLarger}較大）`;
+                correctAnswerDisplay = `${q.nameA} ${q.cupsA} 杯、${q.nameB} ${q.cupsB} 杯（${q.correctLarger}較大）`;
+            } else if (q.mode === 'unit_diff_compare') {
+                const inp0 = document.getElementById('ans-0');
+                if (!inp0 || inp0.value.trim() === '' || !selectedLarger) {
+                    showWarning('⚠️ 請填寫多裝幾杯水，並點選哪一個容器容量比較大喔！');
+                    return;
+                }
+                const val0 = Number(inp0.value.trim());
+                const ok0 = val0 === q.diff;
+                const okChoice = selectedLarger === q.largerName;
+
+                markInputResult(inp0, ok0);
+
+                isCorrect = ok0 && okChoice;
+                userAnswerDisplay = `多裝 ${val0} 杯（${selectedLarger}較大）`;
+                correctAnswerDisplay = `多裝 ${q.diff} 杯（${q.largerName}較大）`;
+            }
+
+            // 寫入作答紀錄
+            addAttemptRecord({
+                category: q.category,
+                questionText: `(${q.labelNo}) ${q.questionText}`,
+                userAnswer: userAnswerDisplay,
+                correctAnswer: correctAnswerDisplay,
+                isCorrect
+            });
+
+            void feedbackBox.offsetWidth;
+
+            if (isCorrect) {
+                isCurrentSolved = true;
+                feedbackBox.innerHTML = `
+                    <div class="w-full py-3 px-4 rounded-xl bg-emerald-50 border-2 border-emerald-400 text-emerald-900 text-center font-bold text-sm sm:text-base shadow-2xs animate-pop">
+                        ✅ 答對了！${q.explanation}
+                    </div>
+                `;
+                if (!q.solved) {
+                    q.solved = true;
+                    solvedCount++;
+                    if (currentIndex >= presetQuestions.length) {
+                        const badge = document.getElementById('progress-badge');
+                        if (badge) {
+                            badge.textContent = `隨機挑戰：第 ${currentIndex + 1} 題（已答對 ${solvedCount} 題）`;
+                        }
+                    }
+                }
+            } else {
+                isCurrentSolved = false;
+                feedbackBox.innerHTML = `
+                    <div class="w-full py-2.5 px-4 rounded-xl bg-red-50 border border-red-300 text-red-800 text-center font-medium text-sm sm:text-base animate-shake">
+                        ❌ 再想一想喔！可以點擊右上角「顯示容量比較小提示」觀察看看！
+                    </div>
+                `;
+            }
+        }
+
+        function showWarning(msg) {
+            const feedbackBox = document.getElementById('feedback-box');
+            if (!feedbackBox) return;
+            feedbackBox.innerHTML = `
+                <div class="w-full py-2.5 px-4 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-center font-medium text-sm sm:text-base">
+                    ${msg}
+                </div>
+            `;
+        }
+
+        function markInputResult(inp, ok) {
+            inp.classList.remove('border-slate-300', 'bg-cyan-50/60', 'text-cyan-900', 'border-red-500', 'bg-red-50', 'text-red-700', 'border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
+            if (ok) {
+                inp.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
+            } else {
+                inp.classList.add('border-red-500', 'bg-red-50', 'text-red-700');
+            }
+        }
+
+        function nextQuestion() {
+            loadQuestion(currentIndex + 1);
+        }
+
+        /* ================= 作答紀錄與統計管理 ================= */
+
+        function loadHistoryFromStorage() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed)) {
+                        attemptHistory = parsed;
+                    }
+                }
+            } catch (e) {
+                attemptHistory = [];
+            }
+            renderHistory();
+        }
+
+        function saveHistoryToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(attemptHistory));
+            } catch (e) {
+                // 忽略儲存限制
+            }
+        }
+
+        function addAttemptRecord({ category, questionText, userAnswer, correctAnswer, isCorrect }) {
+            const now = new Date();
+            const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+            attemptHistory.push({
+                attemptId: attemptHistory.length + 1,
+                category,
+                questionText,
+                userAnswer,
+                correctAnswer,
+                isCorrect,
+                timestamp: timeStr
+            });
+
+            saveHistoryToStorage();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const total = attemptHistory.length;
+            const correctTotal = attemptHistory.filter(r => r.isCorrect).length;
+            const accuracy = total === 0 ? 0 : Math.round((correctTotal / total) * 100);
+
+            const elTotal = document.getElementById('stat-total');
+            const elCorrect = document.getElementById('stat-correct');
+            const elAccuracy = document.getElementById('stat-accuracy');
+
+            if (elTotal) elTotal.textContent = total;
+            if (elCorrect) elCorrect.textContent = correctTotal;
+            if (elAccuracy) elAccuracy.textContent = `${accuracy}%`;
+
+            const tbody = document.getElementById('history-table-body');
+            if (!tbody) return;
+
+            if (total === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="py-8 text-center text-slate-400 text-sm">
+                            尚未有作答紀錄，按下「對答案」後會自動記錄在這裡！
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const reversed = [...attemptHistory].reverse();
+            tbody.innerHTML = reversed.map(rec => {
+                const statusBadge = rec.isCorrect
+                    ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✓ 正確</span>`
+                    : `<div class="flex flex-col items-center gap-0.5">
+                           <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">✗ 錯誤</span>
+                           <span class="text-[11px] text-slate-500">正解：<strong class="text-slate-700">${rec.correctAnswer}</strong></span>
+                       </div>`;
+
+                const userStyle = rec.isCorrect ? 'text-emerald-700' : 'text-red-600';
+
+                return `
+                    <tr class="hover:bg-cyan-50/30 transition-colors">
+                        <td class="py-2.5 px-3 sm:px-4 text-center math-font font-bold text-slate-500">
+                            #${rec.attemptId}
+                        </td>
+                        <td class="py-2.5 px-3 sm:px-4">
+                            <span class="inline-block px-2 py-0.5 rounded border border-cyan-200 bg-cyan-50 text-cyan-800 text-xs font-bold">${rec.category}</span>
+                            <div class="text-[11px] text-slate-400 mt-0.5">${rec.timestamp}</div>
+                        </td>
+                        <td class="py-2.5 px-3 sm:px-4 font-medium text-slate-800">
+                            ${rec.questionText}
+                        </td>
+                        <td class="py-2.5 px-3 sm:px-4 font-extrabold ${userStyle}">
+                            ${rec.userAnswer}
+                        </td>
+                        <td class="py-2.5 px-3 sm:px-4 text-center">
+                            ${statusBadge}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function requestClearHistory() {
+            const btn = document.getElementById('btn-clear-history');
+            if (!btn || attemptHistory.length === 0) return;
+
+            if (btn.dataset.confirming === 'true') {
+                attemptHistory = [];
+                saveHistoryToStorage();
+                renderHistory();
+                btn.dataset.confirming = 'false';
+                btn.innerHTML = `<span>🗑️</span><span>清除紀錄</span>`;
+                btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-red-600 bg-white border border-red-200 hover:bg-red-50 active:scale-95 transition-all flex items-center gap-1 shadow-2xs cursor-pointer';
+                if (confirmClearTimeout) clearTimeout(confirmClearTimeout);
+            } else {
+                btn.dataset.confirming = 'true';
+                btn.innerHTML = `<span>⚠️</span><span>確定清除？</span>`;
+                btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-white bg-red-600 border border-red-600 hover:bg-red-700 active:scale-95 transition-all flex items-center gap-1 shadow-2xs cursor-pointer';
+                confirmClearTimeout = setTimeout(() => {
+                    btn.dataset.confirming = 'false';
+                    btn.innerHTML = `<span>🗑️</span><span>清除紀錄</span>`;
+                    btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-red-600 bg-white border border-red-200 hover:bg-red-50 active:scale-95 transition-all flex items-center gap-1 shadow-2xs cursor-pointer';
+                }, 3500);
+            }
+        }
+
+        function exportCSV() {
+            if (attemptHistory.length === 0) {
+                showWarning('ℹ️ 目前沒有作答紀錄可以匯出喔！');
+                return;
+            }
+
+            const headers = ['次數', '題型', '題目', '你的答案', '正確答案', '結果', '作答時間'];
+            const rows = attemptHistory.map(r => [
+                r.attemptId,
+                `"${r.category}"`,
+                `"${r.questionText}"`,
+                `"${r.userAnswer}"`,
+                `"${r.correctAnswer}"`,
+                r.isCorrect ? '正確' : '錯誤',
+                r.timestamp
+            ]);
+
+            const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const dateTag = new Date().toISOString().slice(0, 10);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `認識容量與比較作答紀錄_${dateTag}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        /* ================= 初始化啟動 ================= */
+        let isInitialized = false;
+        function init() {
+            if (isInitialized) return;
+            isInitialized = true;
+            loadHistoryFromStorage();
+            loadQuestion(0);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>
