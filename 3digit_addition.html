@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本學習內容：NC-2-2-2 熟練三位數加減直式計算（三位數加法篇）</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts Noto Sans TC 與 等寬數字字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8;
+            color: #1e293b;
+        }
+        .math-font {
+            font-family: 'Roboto Mono', 'Noto Sans TC', monospace;
+        }
+        /* 隱藏數字輸入框的上下箭頭 */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        /* 錯誤晃動動畫 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+        /* 答對彈跳動畫 */
+        @keyframes pop {
+            0% { transform: scale(0.95); }
+            50% { transform: scale(1.04); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop {
+            animation: pop 0.35s ease-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-6 px-4 sm:px-6">
+
+    <!-- 主容器 -->
+    <main class="w-full max-w-2xl space-y-5">
+
+        <!-- 1. 標題與重點提醒卡片 (還原圖片風格) -->
+        <header class="bg-[#f8fafc] border border-slate-300 border-l-[6px] border-l-[#0f4c81] rounded-r-xl rounded-l-sm shadow-sm p-4 sm:p-5">
+            <h1 class="text-lg sm:text-xl font-bold text-[#0f4c81] leading-snug mb-2">
+                基本學習內容：NC-2-2-2 熟練三位數加減直式計算（三位數加法篇）。
+            </h1>
+            <p class="text-sm sm:text-base text-slate-700 leading-relaxed">
+                <span class="font-bold text-[#1e3a5f]">重點提醒：</span>寫直式時，「<span class="underline decoration-[#0f4c81]/40 decoration-2 underline-offset-4">個位對齊個位、十位對齊十位、百位對齊百位</span>」，從個位開始加，滿 10 就進 1 到前一位！
+            </p>
+        </header>
+
+        <!-- 小節標題與進度指示 -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+            <div class="flex items-center gap-2.5">
+                <span class="w-1.5 h-6 bg-[#0f4c81] rounded-full inline-block"></span>
+                <h2 class="text-lg sm:text-xl font-bold text-[#1e3a5f]">
+                    一、算算看（對齊位值，寫出直式計算過程）
+                </h2>
+            </div>
+            <span id="progress-badge" class="text-xs sm:text-sm font-bold px-3 py-1 rounded-full bg-[#e2e8f0] text-[#1e3a5f]">
+                例題練習：第 1 題 / 共 3 題
+            </span>
+        </div>
+
+        <!-- 2. 題目互動卡片 -->
+        <section class="bg-white border-2 border-[#cbd5e1] rounded-2xl shadow-md overflow-hidden">
+            
+            <!-- 上方橫式題目列 -->
+            <div class="bg-[#eef3f8] border-b border-[#cbd5e1] py-4 px-6 flex items-center justify-center">
+                <div class="text-xl sm:text-2xl font-bold text-[#1e293b] tracking-wider flex items-center flex-wrap justify-center gap-2">
+                    <span id="question-number">1.</span>
+                    <span id="num1-text" class="math-font">243</span>
+                    <span>+</span>
+                    <span id="num2-text" class="math-font">135</span>
+                    <span>=</span>
+                    <span class="inline-flex items-center">
+                        ( <span id="horizontal-answer" class="math-font min-w-[3.5rem] text-center text-[#0f4c81] font-extrabold px-1 transition-all duration-300">&nbsp;&nbsp;&nbsp;</span> )
+                    </span>
+                </div>
+            </div>
+
+            <!-- 直式計算區 -->
+            <div class="p-6 sm:p-8 flex flex-col items-center justify-center bg-white">
+                
+                <!-- 提示操作小標籤 -->
+                <p class="text-xs text-slate-400 mb-3 text-center">
+                    💡 提示：從右邊「個位」開始輸入，輸入後會自動跳到左邊下一位；上方小框可點擊記進位 <span class="inline-block px-1.5 py-0.2 bg-amber-100 text-amber-700 rounded font-bold">1</span>
+                </p>
+
+                <!-- 直式對齊網格 (4欄：運算符號欄、百位欄、十位欄、個位欄) -->
+                <div class="grid grid-cols-[3rem_4.2rem_4.2rem_4.2rem] sm:grid-cols-[3.5rem_5rem_5rem_5rem] gap-x-2 sm:gap-x-3 items-center select-none">
+                    
+                    <!-- 第 1 列：位值標題 (百、十、個) -->
+                    <div></div>
+                    <div class="text-center text-base sm:text-lg font-bold text-slate-500 pb-1">百</div>
+                    <div class="text-center text-base sm:text-lg font-bold text-slate-500 pb-1">十</div>
+                    <div class="text-center text-base sm:text-lg font-bold text-slate-500 pb-1">個</div>
+
+                    <!-- 第 2 列：進位輔助小框 (百位進位、十位進位) -->
+                    <div class="text-right pr-1 text-xs text-slate-400 font-medium">進位</div>
+                    <div class="flex justify-center pb-1">
+                        <button type="button" id="carry-hundreds" onclick="toggleCarry('carry-hundreds')" title="點擊標記百位進位 1"
+                            class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-dashed border-slate-300 text-xs sm:text-sm font-bold text-transparent hover:border-amber-400 hover:bg-amber-50 transition-all flex items-center justify-center">
+                            1
+                        </button>
+                    </div>
+                    <div class="flex justify-center pb-1">
+                        <button type="button" id="carry-tens" onclick="toggleCarry('carry-tens')" title="點擊標記十位進位 1"
+                            class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-dashed border-slate-300 text-xs sm:text-sm font-bold text-transparent hover:border-amber-400 hover:bg-amber-50 transition-all flex items-center justify-center">
+                            1
+                        </button>
+                    </div>
+                    <div></div>
+
+                    <!-- 第 3 列：被加數 (百、十、個) -->
+                    <div></div>
+                    <div id="d1-h" class="math-font text-center text-3xl sm:text-4xl font-bold text-slate-800 py-1">2</div>
+                    <div id="d1-t" class="math-font text-center text-3xl sm:text-4xl font-bold text-slate-800 py-1">4</div>
+                    <div id="d1-o" class="math-font text-center text-3xl sm:text-4xl font-bold text-slate-800 py-1">3</div>
+
+                    <!-- 第 4 列：加號與加數 (百、十、個) -->
+                    <div class="text-center text-3xl sm:text-4xl font-bold text-[#0f4c81] py-1">+</div>
+                    <div id="d2-h" class="math-font text-center text-3xl sm:text-4xl font-bold text-slate-800 py-1">1</div>
+                    <div id="d2-t" class="math-font text-center text-3xl sm:text-4xl font-bold text-slate-800 py-1">3</div>
+                    <div id="d2-o" class="math-font text-center text-3xl sm:text-4xl font-bold text-slate-800 py-1">5</div>
+
+                    <!-- 第 5 列：粗黑橫線 (橫跨四欄) -->
+                    <div class="col-span-4 border-b-[3.5px] border-[#1e293b] my-2.5 rounded-full"></div>
+
+                    <!-- 第 6 列：作答輸入框 (百、十、個 正下方各一個文字輸入方塊) -->
+                    <div class="text-right pr-1 text-xs sm:text-sm font-bold text-slate-500">答案</div>
+                    
+                    <!-- 百位輸入框 -->
+                    <div class="flex justify-center">
+                        <input type="text" id="input-hundreds" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="百位數字"
+                            class="math-font w-14 h-14 sm:w-16 sm:h-16 text-center text-3xl sm:text-4xl font-bold text-[#0f4c81] bg-[#f8fafc] border-2 border-slate-300 rounded-xl focus:outline-none focus:border-[#0f4c81] focus:ring-4 focus:ring-[#0f4c81]/15 focus:bg-white transition-all" />
+                    </div>
+
+                    <!-- 十位輸入框 -->
+                    <div class="flex justify-center">
+                        <input type="text" id="input-tens" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="十位數字"
+                            class="math-font w-14 h-14 sm:w-16 sm:h-16 text-center text-3xl sm:text-4xl font-bold text-[#0f4c81] bg-[#f8fafc] border-2 border-slate-300 rounded-xl focus:outline-none focus:border-[#0f4c81] focus:ring-4 focus:ring-[#0f4c81]/15 focus:bg-white transition-all" />
+                    </div>
+
+                    <!-- 個位輸入框 -->
+                    <div class="flex justify-center">
+                        <input type="text" id="input-ones" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="個位數字"
+                            class="math-font w-14 h-14 sm:w-16 sm:h-16 text-center text-3xl sm:text-4xl font-bold text-[#0f4c81] bg-[#f8fafc] border-2 border-slate-300 rounded-xl focus:outline-none focus:border-[#0f4c81] focus:ring-4 focus:ring-[#0f4c81]/15 focus:bg-white transition-all" />
+                    </div>
+
+                </div>
+
+                <!-- 回饋訊息顯示區 -->
+                <div id="feedback-box" class="w-full max-w-md mt-6 min-h-[3.5rem] flex items-center justify-center">
+                    <p class="text-slate-400 text-sm">請在上方「百、十、個」的方塊中填入計算結果</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. 最下方按鈕區：對答案、下一題 (含清空重寫輔助按鈕) -->
+        <footer class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-1">
+            <button type="button" id="btn-clear" onclick="clearInputs()"
+                class="w-full sm:w-auto px-5 py-3.5 rounded-xl font-bold text-slate-600 bg-white border-2 border-slate-300 hover:bg-slate-100 active:scale-95 transition-all text-base shadow-sm">
+                重新輸入
+            </button>
+
+            <button type="button" id="btn-check" onclick="checkAnswer()"
+                class="w-full sm:w-44 px-6 py-3.5 rounded-xl font-bold text-white bg-[#0f4c81] hover:bg-[#0a365c] active:scale-95 transition-all text-lg shadow-md flex items-center justify-center gap-2">
+                <span>✔</span>
+                <span>對答案</span>
+            </button>
+
+            <button type="button" id="btn-next" onclick="nextQuestion()"
+                class="w-full sm:w-44 px-6 py-3.5 rounded-xl font-bold text-[#0f4c81] bg-[#e0f2fe] border-2 border-[#7dd3fc] hover:bg-[#bae6fd] active:scale-95 transition-all text-lg shadow-sm flex items-center justify-center gap-2">
+                <span>下一題</span>
+                <span>➔</span>
+            </button>
+        </footer>
+
+        <!-- 4. 作答紀錄區塊 (新增功能) -->
+        <section class="bg-white border-2 border-[#cbd5e1] rounded-2xl shadow-sm overflow-hidden mt-6">
+            <!-- 紀錄標題與操作按鈕列 -->
+            <div class="bg-[#eef3f8] border-b border-[#cbd5e1] px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg">📋</span>
+                    <h3 class="text-base sm:text-lg font-bold text-[#1e3a5f]">作答情形紀錄</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="exportCSV()"
+                        class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-[#0f4c81] bg-white border border-[#0f4c81]/30 hover:bg-[#e0f2fe] active:scale-95 transition-all flex items-center gap-1 shadow-xs">
+                        <span>📥</span>
+                        <span>匯出紀錄 (CSV)</span>
+                    </button>
+                    <button type="button" id="btn-clear-history" onclick="requestClearHistory()"
+                        class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-red-600 bg-white border border-red-200 hover:bg-red-50 active:scale-95 transition-all flex items-center gap-1 shadow-xs">
+                        <span>🗑️</span>
+                        <span>清除紀錄</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 統計數據摘要列 -->
+            <div class="grid grid-cols-3 divide-x divide-slate-200 bg-[#f8fafc] border-b border-slate-200 py-3 px-2 text-center">
+                <div>
+                    <div class="text-xs text-slate-500 font-medium">總作答次數</div>
+                    <div id="stat-total" class="math-font text-lg sm:text-xl font-extrabold text-slate-800 mt-0.5">0</div>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-500 font-medium">答對次數</div>
+                    <div id="stat-correct" class="math-font text-lg sm:text-xl font-extrabold text-emerald-600 mt-0.5">0</div>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-500 font-medium">答對率</div>
+                    <div id="stat-accuracy" class="math-font text-lg sm:text-xl font-extrabold text-[#0f4c81] mt-0.5">0%</div>
+                </div>
+            </div>
+
+            <!-- 紀錄表格容器 -->
+            <div class="overflow-x-auto max-h-80 overflow-y-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 sticky top-0 border-b border-slate-200 text-xs sm:text-sm text-slate-600">
+                        <tr>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold text-center w-16">次數</th>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold">題目</th>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold">使用者輸入數字</th>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold text-center">是否正確</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body" class="divide-y divide-slate-100 text-sm sm:text-base">
+                        <tr>
+                            <td colspan="4" class="py-8 text-center text-slate-400 text-sm">
+                                尚未有作答紀錄，按下「對答案」後會自動記錄在這裡！
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /**
+         * 題庫設定：
+         * 前三題為圖片中的標準例題：
+         * 1. 243 + 135 = 378 (不進位)
+         * 2. 326 + 148 = 474 (個位進十位)
+         * 3. 465 + 272 = 737 (十位進百位)
+         * 做完三題後，點擊「下一題」將自動隨機出題（確保和 < 1000，符合三位數加法範圍）。
+         */
+        const presetQuestions = [
+            { num1: 243, num2: 135 },
+            { num1: 326, num2: 148 },
+            { num1: 465, num2: 272 }
+        ];
+
+        const STORAGE_KEY = 'nc_2_2_2_addition_history_v1';
+
+        let currentIndex = 0; // 目前題號索引 (0-based)
+        let currentQuestion = { num1: 243, num2: 135 };
+        let solvedCount = 0;
+        let attemptHistory = []; // 儲存所有作答紀錄
+        let confirmClearTimeout = null;
+
+        // DOM 元素參照
+        const inputHundreds = document.getElementById('input-hundreds');
+        const inputTens = document.getElementById('input-tens');
+        const inputOnes = document.getElementById('input-ones');
+        const feedbackBox = document.getElementById('feedback-box');
+        const horizontalAnswer = document.getElementById('horizontal-answer');
+
+        /**
+         * 初始化與事件綁定
+         */
+        window.onload = function () {
+            loadHistoryFromStorage();
+            setupInputListeners();
+            loadQuestion(0);
+        };
+
+        /**
+         * 從 localStorage 載入作答紀錄
+         */
+        function loadHistoryFromStorage() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed)) {
+                        attemptHistory = parsed;
+                    }
+                }
+            } catch (e) {
+                console.warn('無法讀取本地作答紀錄:', e);
+                attemptHistory = [];
+            }
+            renderHistory();
+        }
+
+        /**
+         * 將作答紀錄儲存至 localStorage
+         */
+        function saveHistoryToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(attemptHistory));
+            } catch (e) {
+                console.warn('無法儲存本地作答紀錄:', e);
+            }
+        }
+
+        /**
+         * 新增一筆作答紀錄
+         */
+        function addAttemptRecord({ questionNo, num1, num2, valH, valT, valO, isCorrect, correctAnswer }) {
+            const userNumberStr = `${valH}${valT}${valO}`;
+            const userNumberVal = Number(userNumberStr);
+            const now = new Date();
+            const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+            const record = {
+                attemptId: attemptHistory.length + 1,
+                questionNo: questionNo,
+                questionText: `${num1} + ${num2}`,
+                userDigits: { h: valH, t: valT, o: valO },
+                userNumber: userNumberVal,
+                userNumberRaw: userNumberStr,
+                correctAnswer: correctAnswer,
+                isCorrect: isCorrect,
+                timestamp: timeStr
+            };
+
+            attemptHistory.push(record);
+            saveHistoryToStorage();
+            renderHistory();
+        }
+
+        /**
+         * 渲染統計摘要與作答紀錄表格
+         */
+        function renderHistory() {
+            const total = attemptHistory.length;
+            const correctTotal = attemptHistory.filter(r => r.isCorrect).length;
+            const accuracy = total === 0 ? 0 : Math.round((correctTotal / total) * 100);
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-correct').textContent = correctTotal;
+            document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
+
+            const tbody = document.getElementById('history-table-body');
+            if (total === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="py-8 text-center text-slate-400 text-sm">
+                            尚未有作答紀錄，按下「對答案」後會自動記錄在這裡！
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // 最新紀錄顯示在最上方
+            const reversed = [...attemptHistory].reverse();
+            tbody.innerHTML = reversed.map(rec => {
+                const statusBadge = rec.isCorrect
+                    ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-emerald-100 text-emerald-800">✅ 正確</span>`
+                    : `<div class="flex flex-col items-center gap-0.5">
+                           <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-red-100 text-red-700">❌ 錯誤</span>
+                           <span class="text-[11px] text-slate-500">正解：<strong class="math-font text-slate-700">${rec.correctAnswer}</strong></span>
+                       </div>`;
+
+                const userNumberStyle = rec.isCorrect ? 'text-emerald-700' : 'text-red-600';
+
+                return `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="py-2.5 px-3 sm:px-4 text-center math-font font-bold text-slate-500 text-xs sm:text-sm">
+                            #${rec.attemptId}
+                        </td>
+                        <td class="py-2.5 px-3 sm:px-4">
+                            <div class="math-font font-bold text-slate-800">${rec.questionText}</div>
+                            <div class="text-[11px] text-slate-400">第 ${rec.questionNo} 題 · ${rec.timestamp}</div>
+                        </td>
+                        <td class="py-2.5 px-3 sm:px-4">
+                            <div class="math-font font-extrabold text-base sm:text-lg ${userNumberStyle}">${rec.userNumberRaw}</div>
+                            <div class="text-[11px] text-slate-500">
+                                百:<span class="font-bold text-slate-700">${rec.userDigits.h}</span> / 
+                                十:<span class="font-bold text-slate-700">${rec.userDigits.t}</span> / 
+                                個:<span class="font-bold text-slate-700">${rec.userDigits.o}</span>
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-3 sm:px-4 text-center">
+                            ${statusBadge}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        /**
+         * 兩段式安全清除紀錄（不使用 alert / confirm）
+         */
+        function requestClearHistory() {
+            const btn = document.getElementById('btn-clear-history');
+            if (attemptHistory.length === 0) return;
+
+            if (btn.dataset.confirming === 'true') {
+                // 執行清除
+                attemptHistory = [];
+                saveHistoryToStorage();
+                renderHistory();
+                btn.dataset.confirming = 'false';
+                btn.innerHTML = `<span>🗑️</span><span>清除紀錄</span>`;
+                btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-red-600 bg-white border border-red-200 hover:bg-red-50 active:scale-95 transition-all flex items-center gap-1 shadow-xs';
+                if (confirmClearTimeout) clearTimeout(confirmClearTimeout);
+            } else {
+                // 進入確認狀態
+                btn.dataset.confirming = 'true';
+                btn.innerHTML = `<span>⚠️</span><span>確定清除？</span>`;
+                btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-white bg-red-600 border border-red-600 hover:bg-red-700 active:scale-95 transition-all flex items-center gap-1 shadow-xs';
+                confirmClearTimeout = setTimeout(() => {
+                    btn.dataset.confirming = 'false';
+                    btn.innerHTML = `<span>🗑️</span><span>清除紀錄</span>`;
+                    btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-red-600 bg-white border border-red-200 hover:bg-red-50 active:scale-95 transition-all flex items-center gap-1 shadow-xs';
+                }, 3500);
+            }
+        }
+
+        /**
+         * 匯出 CSV 檔案供老師或家長查閱
+         */
+        function exportCSV() {
+            if (attemptHistory.length === 0) {
+                feedbackBox.innerHTML = `
+                    <div class="w-full py-2.5 px-4 rounded-xl bg-amber-50 border border-amber-300 text-amber-800 text-center font-medium text-sm">
+                        ℹ️ 目前沒有作答紀錄可以匯出喔！
+                    </div>
+                `;
+                return;
+            }
+
+            const headers = ['作答次數', '題號', '題目', '使用者輸入數字', '百位', '十位', '個位', '正確答案', '是否正確', '作答時間'];
+            const rows = attemptHistory.map(r => [
+                r.attemptId,
+                `第${r.questionNo}題`,
+                `"${r.questionText}"`,
+                `"\t${r.userNumberRaw}"`,
+                r.userDigits.h,
+                r.userDigits.t,
+                r.userDigits.o,
+                r.correctAnswer,
+                r.isCorrect ? '正確' : '錯誤',
+                r.timestamp
+            ]);
+
+            // 加入 UTF-8 BOM 確保 Excel 開啟中文不亂碼
+            const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const dateTag = new Date().toISOString().slice(0, 10);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `三位數加法作答紀錄_${dateTag}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        /**
+         * 產生隨機三位數加法題目（總和不超過 999，並優先包含進位練習）
+         */
+        function generateRandomQuestion() {
+            let n1, n2;
+            do {
+                n1 = Math.floor(Math.random() * 750) + 112; // 112 ~ 861
+                n2 = Math.floor(Math.random() * (989 - n1)) + 105; // 確保兩者皆為三位數且總和 <= 994
+            } while (n1 + n2 >= 1000 || n2 < 100);
+            return { num1: n1, num2: n2 };
+        }
+
+        /**
+         * 載入指定題號的題目
+         */
+        function loadQuestion(index) {
+            currentIndex = index;
+
+            if (index < presetQuestions.length) {
+                currentQuestion = presetQuestions[index];
+                document.getElementById('progress-badge').textContent = `例題練習：第 ${index + 1} 題 / 共 ${presetQuestions.length} 題`;
+            } else {
+                currentQuestion = generateRandomQuestion();
+                document.getElementById('progress-badge').textContent = `隨機挑戰：第 ${index + 1} 題（已答對 ${solvedCount} 題）`;
+            }
+
+            const { num1, num2 } = currentQuestion;
+
+            // 更新上方橫式題目
+            document.getElementById('question-number').textContent = `${index + 1}.`;
+            document.getElementById('num1-text').textContent = num1;
+            document.getElementById('num2-text').textContent = num2;
+            horizontalAnswer.innerHTML = '&nbsp;&nbsp;&nbsp;';
+            horizontalAnswer.classList.remove('text-emerald-600');
+            horizontalAnswer.classList.add('text-[#0f4c81]');
+
+            // 拆解位值填入直式
+            const s1 = String(num1).padStart(3, ' ');
+            const s2 = String(num2).padStart(3, ' ');
+
+            document.getElementById('d1-h').textContent = s1[0];
+            document.getElementById('d1-t').textContent = s1[1];
+            document.getElementById('d1-o').textContent = s1[2];
+
+            document.getElementById('d2-h').textContent = s2[0];
+            document.getElementById('d2-t').textContent = s2[1];
+            document.getElementById('d2-o').textContent = s2[2];
+
+            // 重置輸入框與進位輔助標記
+            clearInputs();
+        }
+
+        /**
+         * 清空所有輸入框、進位輔助與回饋狀態
+         */
+        function clearInputs() {
+            [inputHundreds, inputTens, inputOnes].forEach(input => {
+                input.value = '';
+                resetInputStyle(input);
+            });
+
+            // 重置進位小圓圈
+            ['carry-hundreds', 'carry-tens'].forEach(id => {
+                const btn = document.getElementById(id);
+                btn.dataset.active = 'false';
+                btn.className = 'w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-dashed border-slate-300 text-xs sm:text-sm font-bold text-transparent hover:border-amber-400 hover:bg-amber-50 transition-all flex items-center justify-center';
+            });
+
+            feedbackBox.innerHTML = `<p class="text-slate-400 text-sm">請從右邊「個位」開始填入答案</p>`;
+
+            // 自動聚焦到「個位」輸入框，符合直式計算從個位算起的習慣
+            inputOnes.focus();
+        }
+
+        /**
+         * 切換進位輔助小框（純輔助學生計算，不影響對答案）
+         */
+        function toggleCarry(id) {
+            const btn = document.getElementById(id);
+            const isActive = btn.dataset.active === 'true';
+            if (!isActive) {
+                btn.dataset.active = 'true';
+                btn.className = 'w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-amber-500 bg-amber-100 text-xs sm:text-sm font-extrabold text-amber-700 shadow-sm transition-all flex items-center justify-center scale-105';
+            } else {
+                btn.dataset.active = 'false';
+                btn.className = 'w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-dashed border-slate-300 text-xs sm:text-sm font-bold text-transparent hover:border-amber-400 hover:bg-amber-50 transition-all flex items-center justify-center';
+            }
+        }
+
+        /**
+         * 重置單一輸入框的邊框顏色
+         */
+        function resetInputStyle(input) {
+            input.classList.remove(
+                'border-red-500', 'bg-red-50', 'text-red-700', 'animate-shake',
+                'border-emerald-500', 'bg-emerald-50', 'text-emerald-700', 'animate-pop'
+            );
+            input.classList.add('border-slate-300', 'bg-[#f8fafc]', 'text-[#0f4c81]');
+        }
+
+        /**
+         * 設定輸入框的數字過濾與自動跳格（個位 -> 十位 -> 百位）
+         */
+        function setupInputListeners() {
+            // 計算順序：個位 -> 十位 -> 百位
+            const order = [
+                { el: inputOnes, next: inputTens, prev: null },
+                { el: inputTens, next: inputHundreds, prev: inputOnes },
+                { el: inputHundreds, next: null, prev: inputTens }
+            ];
+
+            order.forEach(({ el, next, prev }) => {
+                // 輸入事件：只允許 0-9 單一數字，輸入後自動跳到左邊下一位
+                el.addEventListener('input', (e) => {
+                    resetInputStyle(el);
+                    const cleaned = el.value.replace(/[^0-9]/g, '');
+                    el.value = cleaned.slice(-1); // 保留最新輸入的一個數字
+
+                    if (el.value !== '' && next) {
+                        next.focus();
+                        next.select();
+                    }
+                });
+
+                // 點擊時全選方便直接覆蓋修改
+                el.addEventListener('focus', () => {
+                    el.select();
+                });
+
+                // 鍵盤支援：Backspace 退回前一位、左右方向鍵切換、Enter 對答案
+                el.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && el.value === '' && prev) {
+                        e.preventDefault();
+                        prev.focus();
+                        prev.select();
+                    } else if (e.key === 'ArrowLeft' && next) {
+                        e.preventDefault();
+                        next.focus();
+                    } else if (e.key === 'ArrowRight' && prev) {
+                        e.preventDefault();
+                        prev.focus();
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        checkAnswer();
+                    }
+                });
+            });
+        }
+
+        /**
+         * 對答案邏輯
+         */
+        function checkAnswer() {
+            const valH = inputHundreds.value.trim();
+            const valT = inputTens.value.trim();
+            const valO = inputOnes.value.trim();
+
+            // 1. 檢查是否三個格子都已填寫
+            if (valH === '' || valT === '' || valO === '') {
+                [inputHundreds, inputTens, inputOnes].forEach(inp => {
+                    if (inp.value.trim() === '') {
+                        inp.classList.add('border-amber-400', 'bg-amber-50');
+                    }
+                });
+                feedbackBox.innerHTML = `
+                    <div class="w-full py-2.5 px-4 rounded-xl bg-amber-50 border border-amber-300 text-amber-800 text-center font-medium text-sm sm:text-base">
+                        ⚠️ 還有格子沒有填完喔！請把「百、十、個」三個方塊都填上數字。
+                    </div>
+                `;
+                // 聚焦到第一個還沒填的格子（從個位找起）
+                if (valO === '') inputOnes.focus();
+                else if (valT === '') inputTens.focus();
+                else inputHundreds.focus();
+                return;
+            }
+
+            // 2. 計算正確答案並拆解百、十、個位
+            const sum = currentQuestion.num1 + currentQuestion.num2;
+            const ansH = Math.floor(sum / 100);
+            const ansT = Math.floor((sum % 100) / 10);
+            const ansO = sum % 10;
+
+            const isHCorrect = Number(valH) === ansH;
+            const isTCorrect = Number(valT) === ansT;
+            const isOCorrect = Number(valO) === ansO;
+
+            // 先重置樣式以觸發動畫
+            [inputHundreds, inputTens, inputOnes].forEach(resetInputStyle);
+            void feedbackBox.offsetWidth; // 強制 reflow 讓動畫可重複觸發
+
+            const isAllCorrect = isHCorrect && isTCorrect && isOCorrect;
+
+            // 寫入作答紀錄（記錄題目、使用者輸入的數字與各數位明細、是否正確）
+            addAttemptRecord({
+                questionNo: currentIndex + 1,
+                num1: currentQuestion.num1,
+                num2: currentQuestion.num2,
+                valH: valH,
+                valT: valT,
+                valO: valO,
+                isCorrect: isAllCorrect,
+                correctAnswer: sum
+            });
+
+            // 3. 判斷結果並給予個別位值回饋
+            if (isAllCorrect) {
+                // 全部答對
+                [inputHundreds, inputTens, inputOnes].forEach(inp => {
+                    inp.classList.remove('border-slate-300', 'bg-[#f8fafc]', 'text-[#0f4c81]');
+                    inp.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-700', 'animate-pop');
+                });
+
+                // 將正確答案填入上方橫式括號中
+                horizontalAnswer.textContent = sum;
+                horizontalAnswer.classList.remove('text-[#0f4c81]');
+                horizontalAnswer.classList.add('text-emerald-600');
+
+                feedbackBox.innerHTML = `
+                    <div class="w-full py-3 px-4 rounded-xl bg-emerald-50 border-2 border-emerald-400 text-emerald-800 text-center font-bold text-base sm:text-lg shadow-sm animate-pop">
+                        🎉 太棒了！完全正確！答案就是 <span class="math-font underline">${sum}</span>
+                    </div>
+                `;
+
+                // 更新已答對題數（避免同一題重複累加）
+                if (!currentQuestion.solved) {
+                    currentQuestion.solved = true;
+                    solvedCount++;
+                    if (currentIndex >= presetQuestions.length) {
+                        document.getElementById('progress-badge').textContent = `隨機挑戰：第 ${currentIndex + 1} 題（已答對 ${solvedCount} 題）`;
+                    }
+                }
+            } else {
+                // 有錯誤：標記出錯的位值並給予引導提示
+                const wrongPlaces = [];
+
+                if (!isOCorrect) {
+                    markWrong(inputOnes);
+                    wrongPlaces.push('個位');
+                } else {
+                    markCorrect(inputOnes);
+                }
+
+                if (!isTCorrect) {
+                    markWrong(inputTens);
+                    wrongPlaces.push('十位');
+                } else {
+                    markCorrect(inputTens);
+                }
+
+                if (!isHCorrect) {
+                    markWrong(inputHundreds);
+                    wrongPlaces.push('百位');
+                } else {
+                    markCorrect(inputHundreds);
+                }
+
+                // 檢查是否有進位提醒
+                const onesSum = (currentQuestion.num1 % 10) + (currentQuestion.num2 % 10);
+                const tensSum = Math.floor((currentQuestion.num1 % 100) / 10) + Math.floor((currentQuestion.num2 % 100) / 10) + (onesSum >= 10 ? 1 : 0);
+                let carryHint = '';
+                if (onesSum >= 10 || tensSum >= 10) {
+                    carryHint = '記得檢查「滿 10 進 1 到前一位」喔！';
+                }
+
+                feedbackBox.innerHTML = `
+                    <div class="w-full py-2.5 px-4 rounded-xl bg-red-50 border border-red-300 text-red-700 text-center font-medium text-sm sm:text-base animate-shake">
+                        ❌ 再算算看！<span class="font-bold underline">${wrongPlaces.join('、')}</span> 的數字不太對，${carryHint}
+                    </div>
+                `;
+
+                // 自動聚焦到最右邊算錯的欄位（符合從個位檢查的順序）
+                if (!isOCorrect) inputOnes.focus();
+                else if (!isTCorrect) inputTens.focus();
+                else if (!isHCorrect) inputHundreds.focus();
+            }
+        }
+
+        function markWrong(input) {
+            input.classList.remove('border-slate-300', 'bg-[#f8fafc]', 'text-[#0f4c81]');
+            input.classList.add('border-red-500', 'bg-red-50', 'text-red-700', 'animate-shake');
+        }
+
+        function markCorrect(input) {
+            input.classList.remove('border-slate-300', 'bg-[#f8fafc]', 'text-[#0f4c81]');
+            input.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
+        }
+
+        /**
+         * 切換下一題
+         */
+        function nextQuestion() {
+            loadQuestion(currentIndex + 1);
+        }
+    </script>
+</body>
+</html>
