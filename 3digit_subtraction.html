@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本學習內容：NC-2-2-2 熟練三位數加減直式計算（不含兩次退位）</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts Noto Sans TC 與 Roboto Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f5f3ff;
+            color: #1e293b;
+        }
+        .math-font {
+            font-family: 'Roboto Mono', 'Noto Sans TC', monospace;
+        }
+        /* 隱藏數字輸入框上下箭頭 */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        /* 被借位數字的斜線劃掉效果 */
+        .digit-slashed {
+            position: relative;
+            color: #94a3b8 !important;
+        }
+        .digit-slashed::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 12%;
+            width: 76%;
+            height: 3.5px;
+            background-color: #e11d48;
+            transform: rotate(-35deg);
+            border-radius: 999px;
+            pointer-events: none;
+        }
+        /* 錯誤晃動動畫 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+        /* 答對彈跳動畫 */
+        @keyframes pop {
+            0% { transform: scale(0.95); }
+            50% { transform: scale(1.04); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop {
+            animation: pop 0.35s ease-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-6 px-4 sm:px-6">
+
+    <!-- 主容器 -->
+    <main class="w-full max-w-2xl space-y-5">
+
+        <!-- 1. 標題與重點提醒卡片 (還原圖片紫色系風格) -->
+        <header class="bg-[#faf8ff] border border-purple-200 border-l-[6px] border-l-[#6d28d9] rounded-r-xl rounded-l-sm shadow-sm p-4 sm:p-5">
+            <h1 class="text-lg sm:text-xl font-bold text-[#6d28d9] leading-snug mb-2">
+                基本學習內容：NC-2-2-2 熟練三位數加減直式計算（不含兩次退位）。
+            </h1>
+            <p class="text-sm sm:text-base text-slate-700 leading-relaxed">
+                <span class="font-bold text-[#4c1d95]">重點提醒：</span>從個位開始減！如果不夠減，要向前一位「<span class="underline decoration-[#6d28d9]/40 decoration-2 underline-offset-4 font-medium text-[#5b21b6]">借 1 當 10</span>」（1 個十換 10 個一，或 1 個百換 10 個十），記得把被借走的數字劃掉改寫喔！
+            </p>
+        </header>
+
+        <!-- 小節標題與進度指示 -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+            <div class="flex items-center gap-2.5">
+                <span class="w-1.5 h-6 bg-[#6d28d9] rounded-full inline-block"></span>
+                <h2 id="section-title" class="text-lg sm:text-xl font-bold text-[#1e1b4b]">
+                    一、算算看（對齊位值，寫出直式與借位記號）
+                </h2>
+            </div>
+            <span id="progress-badge" class="text-xs sm:text-sm font-bold px-3 py-1 rounded-full bg-purple-100 text-[#5b21b6]">
+                學習單例題：第 1 題 / 共 6 題
+            </span>
+        </div>
+
+        <!-- 2. 題目互動卡片 -->
+        <section class="bg-white border-2 border-[#cbd5e1] rounded-2xl shadow-md overflow-hidden">
+            
+            <!-- 上方橫式題目列 -->
+            <div class="bg-[#f3f0ff] border-b border-[#cbd5e1] py-4 px-6 flex items-center justify-center">
+                <div class="text-xl sm:text-2xl font-bold text-[#1e293b] tracking-wider flex items-center flex-wrap justify-center gap-2">
+                    <span id="question-number">1.</span>
+                    <span id="num1-text" class="math-font">587</span>
+                    <span>−</span>
+                    <span id="num2-text" class="math-font">243</span>
+                    <span>=</span>
+                    <span class="inline-flex items-center">
+                        ( <span id="horizontal-answer" class="math-font min-w-[3.5rem] text-center text-[#6d28d9] font-extrabold px-1 transition-all duration-300">&nbsp;&nbsp;&nbsp;</span> )
+                    </span>
+                </div>
+            </div>
+
+            <!-- 直式計算區 -->
+            <div class="p-5 sm:p-8 flex flex-col items-center justify-center bg-white">
+                
+                <!-- 提示操作小標籤 -->
+                <p class="text-xs text-slate-500 mb-3 text-center leading-relaxed">
+                    💡 退位小幫手：點擊上排被減數的「<span class="font-bold text-[#6d28d9]">百</span>」或「<span class="font-bold text-[#6d28d9]">十</span>」位數字，可將數字<span class="text-rose-600 font-bold">劃掉</span>並自動在上方改寫減 1 與借 <span class="font-bold text-amber-600">10</span>！
+                </p>
+
+                <!-- 直式對齊網格 (4欄：運算符號欄、百位欄、十位欄、個位欄) -->
+                <div class="grid grid-cols-[3.2rem_4.4rem_4.4rem_4.4rem] sm:grid-cols-[3.8rem_5.2rem_5.2rem_5.2rem] gap-x-2 sm:gap-x-3 items-center select-none">
+                    
+                    <!-- 第 1 列：位值標題 (百、十、個) -->
+                    <div></div>
+                    <div class="text-center text-base sm:text-lg font-bold text-slate-500 pb-1">百</div>
+                    <div class="text-center text-base sm:text-lg font-bold text-slate-500 pb-1">十</div>
+                    <div class="text-center text-base sm:text-lg font-bold text-slate-500 pb-1">個</div>
+
+                    <!-- 第 2 列：退位改寫與借 10 輔助列 -->
+                    <div class="text-right pr-1 text-[11px] sm:text-xs text-slate-400 font-medium">退位</div>
+                    
+                    <!-- 百位退位改寫顯示區 -->
+                    <div class="flex justify-center items-center h-8 pb-1">
+                        <input type="text" id="rewrite-h" inputmode="numeric" maxlength="1" aria-label="百位退位改寫"
+                            class="hidden math-font w-8 h-7 sm:w-9 sm:h-8 text-center text-sm sm:text-base font-extrabold text-rose-600 bg-rose-50 border border-rose-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-400" />
+                    </div>
+
+                    <!-- 十位退位改寫 / 借10顯示區 -->
+                    <div class="flex justify-center items-center gap-1 h-8 pb-1">
+                        <span id="borrow-ten-badge" class="hidden math-font px-1.5 py-0.5 text-xs sm:text-sm font-extrabold text-amber-700 bg-amber-100 border border-amber-300 rounded">10</span>
+                        <input type="text" id="rewrite-t" inputmode="numeric" maxlength="1" aria-label="十位退位改寫"
+                            class="hidden math-font w-8 h-7 sm:w-9 sm:h-8 text-center text-sm sm:text-base font-extrabold text-rose-600 bg-rose-50 border border-rose-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-400" />
+                    </div>
+
+                    <!-- 個位借10顯示區 -->
+                    <div class="flex justify-center items-center h-8 pb-1">
+                        <span id="borrow-one-badge" class="hidden math-font px-1.5 py-0.5 text-xs sm:text-sm font-extrabold text-amber-700 bg-amber-100 border border-amber-300 rounded">10</span>
+                    </div>
+
+                    <!-- 第 3 列：被減數 (百、十、個) -->
+                    <div></div>
+                    <div class="flex justify-center">
+                        <button type="button" id="d1-h" onclick="toggleBorrow('hundreds')" title="點擊劃掉百位並向百位借 1 當 10"
+                            class="math-font w-12 h-11 sm:w-14 sm:h-12 rounded-lg text-center text-3xl sm:text-4xl font-bold text-slate-800 hover:bg-purple-50 transition-colors cursor-pointer">
+                            5
+                        </button>
+                    </div>
+                    <div class="flex justify-center">
+                        <button type="button" id="d1-t" onclick="toggleBorrow('tens')" title="點擊劃掉十位並向十位借 1 當 10"
+                            class="math-font w-12 h-11 sm:w-14 sm:h-12 rounded-lg text-center text-3xl sm:text-4xl font-bold text-slate-800 hover:bg-purple-50 transition-colors cursor-pointer">
+                            8
+                        </button>
+                    </div>
+                    <div class="flex justify-center">
+                        <div id="d1-o" class="math-font w-12 h-11 sm:w-14 sm:h-12 flex items-center justify-center text-3xl sm:text-4xl font-bold text-slate-800">
+                            7
+                        </div>
+                    </div>
+
+                    <!-- 第 4 列：減號與減數 (百、十、個) -->
+                    <div class="text-center text-3xl sm:text-4xl font-bold text-[#6d28d9] py-1">−</div>
+                    <div id="d2-h" class="math-font text-center text-3xl sm:text-4xl font-bold text-slate-800 py-1">2</div>
+                    <div id="d2-t" class="math-font text-center text-3xl sm:text-4xl font-bold text-slate-800 py-1">4</div>
+                    <div id="d2-o" class="math-font text-center text-3xl sm:text-4xl font-bold text-slate-800 py-1">3</div>
+
+                    <!-- 第 5 列：粗黑橫線 (橫跨四欄) -->
+                    <div class="col-span-4 border-b-[3.5px] border-[#1e293b] my-2.5 rounded-full"></div>
+
+                    <!-- 第 6 列：作答輸入框 (百、十、個 正下方各一個文字輸入方塊) -->
+                    <div class="text-right pr-1 text-xs sm:text-sm font-bold text-slate-500">答案</div>
+                    
+                    <!-- 百位輸入框 -->
+                    <div class="flex justify-center">
+                        <input type="text" id="input-hundreds" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="百位數字"
+                            class="math-font w-14 h-14 sm:w-16 sm:h-16 text-center text-3xl sm:text-4xl font-bold text-[#6d28d9] bg-[#faf8ff] border-2 border-slate-300 rounded-xl focus:outline-none focus:border-[#6d28d9] focus:ring-4 focus:ring-[#6d28d9]/15 focus:bg-white transition-all" />
+                    </div>
+
+                    <!-- 十位輸入框 -->
+                    <div class="flex justify-center">
+                        <input type="text" id="input-tens" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="十位數字"
+                            class="math-font w-14 h-14 sm:w-16 sm:h-16 text-center text-3xl sm:text-4xl font-bold text-[#6d28d9] bg-[#faf8ff] border-2 border-slate-300 rounded-xl focus:outline-none focus:border-[#6d28d9] focus:ring-4 focus:ring-[#6d28d9]/15 focus:bg-white transition-all" />
+                    </div>
+
+                    <!-- 個位輸入框 -->
+                    <div class="flex justify-center">
+                        <input type="text" id="input-ones" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="個位數字"
+                            class="math-font w-14 h-14 sm:w-16 sm:h-16 text-center text-3xl sm:text-4xl font-bold text-[#6d28d9] bg-[#faf8ff] border-2 border-slate-300 rounded-xl focus:outline-none focus:border-[#6d28d9] focus:ring-4 focus:ring-[#6d28d9]/15 focus:bg-white transition-all" />
+                    </div>
+
+                </div>
+
+                <!-- 回饋訊息顯示區 -->
+                <div id="feedback-box" class="w-full max-w-md mt-6 min-h-[3.5rem] flex items-center justify-center">
+                    <p class="text-slate-400 text-sm">請在上方「百、十、個」的方塊中填入計算結果</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. 最下方按鈕區：重新輸入、對答案、下一題 -->
+        <footer class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-1">
+            <button type="button" id="btn-clear" onclick="clearInputs()"
+                class="w-full sm:w-auto px-5 py-3.5 rounded-xl font-bold text-slate-600 bg-white border-2 border-slate-300 hover:bg-slate-100 active:scale-95 transition-all text-base shadow-sm">
+                重新輸入
+            </button>
+
+            <button type="button" id="btn-check" onclick="checkAnswer()"
+                class="w-full sm:w-44 px-6 py-3.5 rounded-xl font-bold text-white bg-[#6d28d9] hover:bg-[#5b21b6] active:scale-95 transition-all text-lg shadow-md flex items-center justify-center gap-2">
+                <span>✔</span>
+                <span>對答案</span>
+            </button>
+
+            <button type="button" id="btn-next" onclick="nextQuestion()"
+                class="w-full sm:w-44 px-6 py-3.5 rounded-xl font-bold text-[#6d28d9] bg-purple-100 border-2 border-purple-300 hover:bg-purple-200 active:scale-95 transition-all text-lg shadow-sm flex items-center justify-center gap-2">
+                <span>下一題</span>
+                <span>➔</span>
+            </button>
+        </footer>
+
+        <!-- 4. 作答紀錄區塊 -->
+        <section class="bg-white border-2 border-[#cbd5e1] rounded-2xl shadow-sm overflow-hidden mt-6">
+            <!-- 紀錄標題與操作按鈕列 -->
+            <div class="bg-[#f3f0ff] border-b border-[#cbd5e1] px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg">📋</span>
+                    <h3 class="text-base sm:text-lg font-bold text-[#1e1b4b]">作答情形紀錄</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="exportCSV()"
+                        class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-[#6d28d9] bg-white border border-purple-300 hover:bg-purple-50 active:scale-95 transition-all flex items-center gap-1 shadow-xs">
+                        <span>📥</span>
+                        <span>匯出紀錄 (CSV)</span>
+                    </button>
+                    <button type="button" id="btn-clear-history" onclick="requestClearHistory()"
+                        class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-red-600 bg-white border border-red-200 hover:bg-red-50 active:scale-95 transition-all flex items-center gap-1 shadow-xs">
+                        <span>🗑️</span>
+                        <span>清除紀錄</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 統計數據摘要列 -->
+            <div class="grid grid-cols-3 divide-x divide-slate-200 bg-[#faf8ff] border-b border-slate-200 py-3 px-2 text-center">
+                <div>
+                    <div class="text-xs text-slate-500 font-medium">總作答次數</div>
+                    <div id="stat-total" class="math-font text-lg sm:text-xl font-extrabold text-slate-800 mt-0.5">0</div>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-500 font-medium">答對次數</div>
+                    <div id="stat-correct" class="math-font text-lg sm:text-xl font-extrabold text-emerald-600 mt-0.5">0</div>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-500 font-medium">答對率</div>
+                    <div id="stat-accuracy" class="math-font text-lg sm:text-xl font-extrabold text-[#6d28d9] mt-0.5">0%</div>
+                </div>
+            </div>
+
+            <!-- 紀錄表格容器 -->
+            <div class="overflow-x-auto max-h-80 overflow-y-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 sticky top-0 border-b border-slate-200 text-xs sm:text-sm text-slate-600">
+                        <tr>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold text-center w-16">次數</th>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold">題目</th>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold">使用者輸入數字</th>
+                            <th class="py-2.5 px-3 sm:px-4 font-bold text-center">是否正確</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body" class="divide-y divide-slate-100 text-sm sm:text-base">
+                        <tr>
+                            <td colspan="4" class="py-8 text-center text-slate-400 text-sm">
+                                尚未有作答紀錄，按下「對答案」後會自動記錄在這裡！
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /**
+         * 題庫設定（完整收錄學習單第一大題與第二大題共 6 題）：
+         * 一、算算看（對齊位值，寫出直式與借位記號）
+         *   1. 587 - 243 = 344 (不退位)
+         *   2. 462 - 138 = 324 (個位不夠減，向十位借 1)
+         *   3. 729 - 364 = 365 (十位不夠減，向百位借 1)
+         * 二、自己列直式算算看（退位減法練習）
+         *   4. 654 - 219 = 435 (個位不夠減，向十位借 1)
+         *   5. 837 - 472 = 365 (十位不夠減，向百位借 1)
+         *   6. 540 - 65  = 475 (二位數減數對齊十位與個位)
+         * 
+         * 第 7 題起：自動隨機出題，嚴格保證「最多只有一次退位（不含兩次退位）」。
+         */
+        const presetQuestions = [
+            { num1: 587, num2: 243, section: '一、算算看（對齊位值，寫出直式與借位記號）', labelNo: 1 },
+            { num1: 462, num2: 138, section: '一、算算看（對齊位值，寫出直式與借位記號）', labelNo: 2 },
+            { num1: 729, num2: 364, section: '一、算算看（對齊位值，寫出直式與借位記號）', labelNo: 3 },
+            { num1: 654, num2: 219, section: '二、自己列直式算算看（一次退位減法練習）', labelNo: 1 },
+            { num1: 837, num2: 472, section: '二、自己列直式算算看（一次退位減法練習）', labelNo: 2 },
+            { num1: 540, num2: 65,  section: '二、自己列直式算算看（退位減法練習）', labelNo: 3 }
+        ];
+
+        const STORAGE_KEY = 'nc_2_2_2_subtraction_history_v1';
+
+        let currentIndex = 0;
+        let currentQuestion = presetQuestions[0];
+        let solvedCount = 0;
+        let attemptHistory = [];
+        let confirmClearTimeout = null;
+        let isCurrentAnsweredCorrectly = false;
+
+        // 退位輔助狀態
+        let borrowState = {
+            tens: false,     // 是否向十位借 1（十位劃掉改寫、個位 +10）
+            hundreds: false  // 是否向百位借 1（百位劃掉改寫、十位 +10）
+        };
+
+        // DOM 元素參照
+        const inputHundreds = document.getElementById('input-hundreds');
+        const inputTens = document.getElementById('input-tens');
+        const inputOnes = document.getElementById('input-ones');
+        const feedbackBox = document.getElementById('feedback-box');
+        const horizontalAnswer = document.getElementById('horizontal-answer');
+
+        /**
+         * 初始化
+         */
+        window.onload = function () {
+            loadHistoryFromStorage();
+            setupInputListeners();
+            loadQuestion(0);
+        };
+
+        /**
+         * 產生「不含兩次退位」的三位數減法隨機題目
+         * 規則：
+         * - 偶爾不退位 (20%)
+         * - 個位退位但十位不退位 (40%)
+         * - 十位退位但個位不退位 (40%)
+         */
+        function generateSingleBorrowQuestion() {
+            const mode = Math.random();
+            let h1, t1, o1, h2, t2, o2;
+
+            if (mode < 0.2) {
+                // 模式 A：不退位
+                h1 = randInt(3, 9);
+                h2 = randInt(1, h1 - 1);
+                t1 = randInt(2, 9);
+                t2 = randInt(1, t1);
+                o1 = randInt(2, 9);
+                o2 = randInt(1, o1);
+            } else if (mode < 0.6) {
+                // 模式 B：僅個位退位（o1 < o2，且 t1 - 1 >= t2 確保十位不再退位）
+                o1 = randInt(0, 7);
+                o2 = randInt(o1 + 1, 9);
+                t1 = randInt(2, 9);
+                t2 = randInt(0, t1 - 1);
+                h1 = randInt(3, 9);
+                h2 = randInt(1, h1 - 1);
+            } else {
+                // 模式 C：僅十位退位（o1 >= o2，且 t1 < t2 需向百位借 1）
+                o1 = randInt(2, 9);
+                o2 = randInt(0, o1);
+                t1 = randInt(0, 7);
+                t2 = randInt(t1 + 1, 9);
+                h1 = randInt(3, 9);
+                h2 = randInt(1, h1 - 1);
+            }
+
+            const num1 = h1 * 100 + t1 * 10 + o1;
+            const num2 = h2 * 100 + t2 * 10 + o2;
+            return {
+                num1,
+                num2,
+                section: '三、隨機挑戰（不含兩次退位）',
+                labelNo: currentIndex + 1
+            };
+        }
+
+        function randInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        /**
+         * 載入題目
+         */
+        function loadQuestion(index) {
+            currentIndex = index;
+            isCurrentAnsweredCorrectly = false;
+
+            if (index < presetQuestions.length) {
+                currentQuestion = { ...presetQuestions[index] };
+                document.getElementById('progress-badge').textContent = `學習單例題：第 ${index + 1} 題 / 共 ${presetQuestions.length} 題`;
+            } else {
+                currentQuestion = generateSingleBorrowQuestion();
+                document.getElementById('progress-badge').textContent = `隨機挑戰：第 ${index + 1} 題（已答對 ${solvedCount} 題）`;
+            }
+
+            const { num1, num2, section, labelNo } = currentQuestion;
+
+            // 更新小節與上方橫式
+            document.getElementById('section-title').textContent = section;
+            document.getElementById('question-number').textContent = `${labelNo}.`;
+            document.getElementById('num1-text').textContent = num1;
+            document.getElementById('num2-text').textContent = num2;
+
+            horizontalAnswer.innerHTML = '&nbsp;&nbsp;&nbsp;';
+            horizontalAnswer.classList.remove('text-emerald-600');
+            horizontalAnswer.classList.add('text-[#6d28d9]');
+
+            // 拆解被減數（三位數）
+            const s1 = String(num1).padStart(3, ' ');
+            document.getElementById('d1-h').textContent = s1[0];
+            document.getElementById('d1-t').textContent = s1[1];
+            document.getElementById('d1-o').textContent = s1[2];
+
+            // 拆解減數（支援三位數與二位數，如 65 對齊十位與個位）
+            const s2 = String(num2).padStart(3, ' ');
+            document.getElementById('d2-h').textContent = s2[0] === ' ' ? '' : s2[0];
+            document.getElementById('d2-t').textContent = s2[1] === ' ' ? '' : s2[1];
+            document.getElementById('d2-o').textContent = s2[2];
+
+            clearInputs();
+        }
+
+        /**
+         * 切換退位劃掉與改寫輔助功能
+         * @param {'tens' | 'hundreds'} place - 被借走的位值 ('tens' 表示個位向十位借 1；'hundreds' 表示十位向百位借 1)
+         */
+        function toggleBorrow(place) {
+            const h1 = Math.floor(currentQuestion.num1 / 100);
+            const t1 = Math.floor((currentQuestion.num1 % 100) / 10);
+
+            if (place === 'tens') {
+                // 若十位原本是 0，無法直接向十位借 1（需先向百位借）
+                if (t1 === 0 && !borrowState.hundreds) {
+                    feedbackBox.innerHTML = `
+                        <div class="w-full py-2 px-4 rounded-xl bg-amber-50 border border-amber-300 text-amber-800 text-center text-xs sm:text-sm">
+                            💡 十位是 0 不夠借喔！要先向「百位」借 1 當 10！
+                        </div>
+                    `;
+                    return;
+                }
+                borrowState.tens = !borrowState.tens;
+                const d1t = document.getElementById('d1-t');
+                const rewriteT = document.getElementById('rewrite-t');
+                const borrowOneBadge = document.getElementById('borrow-one-badge');
+
+                if (borrowState.tens) {
+                    d1t.classList.add('digit-slashed');
+                    const baseT = borrowState.hundreds ? t1 + 10 : t1;
+                    rewriteT.value = baseT - 1;
+                    rewriteT.classList.remove('hidden');
+                    borrowOneBadge.classList.remove('hidden');
+                } else {
+                    d1t.classList.remove('digit-slashed');
+                    rewriteT.classList.add('hidden');
+                    rewriteT.value = '';
+                    borrowOneBadge.classList.add('hidden');
+                }
+            } else if (place === 'hundreds') {
+                if (h1 === 0) return;
+                borrowState.hundreds = !borrowState.hundreds;
+                const d1h = document.getElementById('d1-h');
+                const rewriteH = document.getElementById('rewrite-h');
+                const borrowTenBadge = document.getElementById('borrow-ten-badge');
+
+                if (borrowState.hundreds) {
+                    d1h.classList.add('digit-slashed');
+                    rewriteH.value = h1 - 1;
+                    rewriteH.classList.remove('hidden');
+                    borrowTenBadge.classList.remove('hidden');
+                } else {
+                    d1h.classList.remove('digit-slashed');
+                    rewriteH.classList.add('hidden');
+                    rewriteH.value = '';
+                    borrowTenBadge.classList.add('hidden');
+                }
+            }
+        }
+
+        /**
+         * 重置所有退位輔助記號
+         */
+        function resetBorrowHelpers() {
+            borrowState = { tens: false, hundreds: false };
+            document.getElementById('d1-h').classList.remove('digit-slashed');
+            document.getElementById('d1-t').classList.remove('digit-slashed');
+
+            const rewriteH = document.getElementById('rewrite-h');
+            const rewriteT = document.getElementById('rewrite-t');
+            rewriteH.classList.add('hidden');
+            rewriteT.classList.add('hidden');
+            rewriteH.value = '';
+            rewriteT.value = '';
+
+            document.getElementById('borrow-ten-badge').classList.add('hidden');
+            document.getElementById('borrow-one-badge').classList.add('hidden');
+        }
+
+        /**
+         * 清空輸入框與輔助狀態
+         */
+        function clearInputs() {
+            [inputHundreds, inputTens, inputOnes].forEach(input => {
+                input.value = '';
+                resetInputStyle(input);
+            });
+            resetBorrowHelpers();
+            feedbackBox.innerHTML = `<p class="text-slate-400 text-sm">請從右邊「個位」開始填入計算結果</p>`;
+            inputOnes.focus();
+        }
+
+        /**
+         * 重置單一輸入框樣式
+         */
+        function resetInputStyle(input) {
+            input.classList.remove(
+                'border-red-500', 'bg-red-50', 'text-red-700', 'animate-shake',
+                'border-emerald-500', 'bg-emerald-50', 'text-emerald-700', 'animate-pop',
+                'border-amber-400', 'bg-amber-50'
+            );
+            input.classList.add('border-slate-300', 'bg-[#faf8ff]', 'text-[#6d28d9]');
+        }
+
+        /**
+         * 設定輸入框數字過濾與右至左自動跳格（個位 -> 十位 -> 百位）
+         */
+        function setupInputListeners() {
+            const order = [
+                { el: inputOnes, next: inputTens, prev: null },
+                { el: inputTens, next: inputHundreds, prev: inputOnes },
+                { el: inputHundreds, next: null, prev: inputTens }
+            ];
+
+            order.forEach(({ el, next, prev }) => {
+                el.addEventListener('input', () => {
+                    resetInputStyle(el);
+                    const cleaned = el.value.replace(/[^0-9]/g, '');
+                    el.value = cleaned.slice(-1);
+
+                    if (el.value !== '' && next) {
+                        next.focus();
+                        next.select();
+                    }
+                });
+
+                el.addEventListener('focus', () => {
+                    el.select();
+                });
+
+                el.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && el.value === '' && prev) {
+                        e.preventDefault();
+                        prev.focus();
+                        prev.select();
+                    } else if (e.key === 'ArrowLeft' && next) {
+                        e.preventDefault();
+                        next.focus();
+                    } else if (e.key === 'ArrowRight' && prev) {
+                        e.preventDefault();
+                        prev.focus();
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (isCurrentAnsweredCorrectly) {
+                            nextQuestion();
+                        } else {
+                            checkAnswer();
+                        }
+                    }
+                });
+            });
+
+            // 限制改寫小框只能輸入單一數字
+            ['rewrite-h', 'rewrite-t'].forEach(id => {
+                const el = document.getElementById(id);
+                el.addEventListener('input', () => {
+                    el.value = el.value.replace(/[^0-9]/g, '').slice(-1);
+                });
+            });
+        }
+
+        /**
+         * 對答案邏輯
+         */
+        function checkAnswer() {
+            const valH = inputHundreds.value.trim();
+            const valT = inputTens.value.trim();
+            const valO = inputOnes.value.trim();
+
+            const diff = currentQuestion.num1 - currentQuestion.num2;
+            const ansH = Math.floor(diff / 100);
+            const ansT = Math.floor((diff % 100) / 10);
+            const ansO = diff % 10;
+
+            // 檢查十位與個位是否已填（若百位答案為 0，允許留空或填 0；若百位不為 0 則必須填寫）
+            if (valO === '' || valT === '' || (ansH > 0 && valH === '')) {
+                if (valO === '') inputOnes.classList.add('border-amber-400', 'bg-amber-50');
+                if (valT === '') inputTens.classList.add('border-amber-400', 'bg-amber-50');
+                if (ansH > 0 && valH === '') inputHundreds.classList.add('border-amber-400', 'bg-amber-50');
+
+                feedbackBox.innerHTML = `
+                    <div class="w-full py-2.5 px-4 rounded-xl bg-amber-50 border border-amber-300 text-amber-800 text-center font-medium text-sm sm:text-base">
+                        ⚠️ 還有格子沒有填完喔！請把計算結果填進方塊中。
+                    </div>
+                `;
+                if (valO === '') inputOnes.focus();
+                else if (valT === '') inputTens.focus();
+                else inputHundreds.focus();
+                return;
+            }
+
+            const effectiveValH = valH === '' ? '0' : valH;
+            const isHCorrect = Number(effectiveValH) === ansH;
+            const isTCorrect = Number(valT) === ansT;
+            const isOCorrect = Number(valO) === ansO;
+
+            [inputHundreds, inputTens, inputOnes].forEach(resetInputStyle);
+            void feedbackBox.offsetWidth;
+
+            const isAllCorrect = isHCorrect && isTCorrect && isOCorrect;
+
+            // 寫入作答紀錄
+            addAttemptRecord({
+                questionNo: currentIndex + 1,
+                num1: currentQuestion.num1,
+                num2: currentQuestion.num2,
+                valH: valH === '' ? '-' : valH,
+                valT: valT,
+                valO: valO,
+                userNumberVal: Number(`${effectiveValH}${valT}${valO}`),
+                isCorrect: isAllCorrect,
+                correctAnswer: diff
+            });
+
+            if (isAllCorrect) {
+                isCurrentAnsweredCorrectly = true;
+                [inputHundreds, inputTens, inputOnes].forEach(inp => {
+                    if (inp.value !== '' || inp !== inputHundreds) {
+                        inp.classList.remove('border-slate-300', 'bg-[#faf8ff]', 'text-[#6d28d9]');
+                        inp.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-700', 'animate-pop');
+                    }
+                });
+
+                horizontalAnswer.textContent = diff;
+                horizontalAnswer.classList.remove('text-[#6d28d9]');
+                horizontalAnswer.classList.add('text-emerald-600');
+
+                feedbackBox.innerHTML = `
+                    <div class="w-full py-3 px-4 rounded-xl bg-emerald-50 border-2 border-emerald-400 text-emerald-800 text-center font-bold text-base sm:text-lg shadow-sm animate-pop">
+                        🎉 太棒了！完全正確！答案就是 <span class="math-font underline">${diff}</span>
+                    </div>
+                `;
+
+                if (!currentQuestion.solved) {
+                    currentQuestion.solved = true;
+                    solvedCount++;
+                    if (currentIndex >= presetQuestions.length) {
+                        document.getElementById('progress-badge').textContent = `隨機挑戰：第 ${currentIndex + 1} 題（已答對 ${solvedCount} 題）`;
+                    }
+                }
+            } else {
+                isCurrentAnsweredCorrectly = false;
+                const wrongPlaces = [];
+
+                if (!isOCorrect) {
+                    markWrong(inputOnes);
+                    wrongPlaces.push('個位');
+                } else {
+                    markCorrect(inputOnes);
+                }
+
+                if (!isTCorrect) {
+                    markWrong(inputTens);
+                    wrongPlaces.push('十位');
+                } else {
+                    markCorrect(inputTens);
+                }
+
+                if (!isHCorrect) {
+                    markWrong(inputHundreds);
+                    wrongPlaces.push('百位');
+                } else if (valH !== '') {
+                    markCorrect(inputHundreds);
+                }
+
+                // 檢查是否忘記退位減 1
+                const o1 = currentQuestion.num1 % 10;
+                const o2 = currentQuestion.num2 % 10;
+                const t1 = Math.floor((currentQuestion.num1 % 100) / 10);
+                const t2 = Math.floor((currentQuestion.num2 % 100) / 10);
+
+                let borrowHint = '';
+                if (o1 < o2 || (t1 - (o1 < o2 ? 1 : 0)) < t2) {
+                    borrowHint = '記得向前一位「借 1 當 10」，被借走的數字要減 1 喔！';
+                }
+
+                feedbackBox.innerHTML = `
+                    <div class="w-full py-2.5 px-4 rounded-xl bg-red-50 border border-red-300 text-red-700 text-center font-medium text-sm sm:text-base animate-shake">
+                        ❌ 再算算看！<span class="font-bold underline">${wrongPlaces.join('、')}</span> 的數字不太對，${borrowHint}
+                    </div>
+                `;
+
+                if (!isOCorrect) inputOnes.focus();
+                else if (!isTCorrect) inputTens.focus();
+                else if (!isHCorrect) inputHundreds.focus();
+            }
+        }
+
+        function markWrong(input) {
+            input.classList.remove('border-slate-300', 'bg-[#faf8ff]', 'text-[#6d28d9]');
+            input.classList.add('border-red-500', 'bg-red-50', 'text-red-700', 'animate-shake');
+        }
+
+        function markCorrect(input) {
+            input.classList.remove('border-slate-300', 'bg-[#faf8ff]', 'text-[#6d28d9]');
+            input.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
+        }
+
+        /**
+         * 下一題
+         */
+        function nextQuestion() {
+            loadQuestion(currentIndex + 1);
+        }
+
+        /* ================= 作答紀錄管理系統 ================= */
+
+        function loadHistoryFromStorage() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed)) {
+                        attemptHistory = parsed;
+                    }
+                }
+            } catch (e) {
+                attemptHistory = [];
+            }
+            renderHistory();
+        }
+
+        function saveHistoryToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(attemptHistory));
+            } catch (e) {
+                // 忽略儲存空間限制錯誤
+            }
+        }
+
+        function addAttemptRecord({ questionNo, num1, num2, valH, valT, valO, userNumberVal, isCorrect, correctAnswer }) {
+            const now = new Date();
+            const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+            attemptHistory.push({
+                attemptId: attemptHistory.length + 1,
+                questionNo,
+                questionText: `${num1} − ${num2}`,
+                userDigits: { h: valH, t: valT, o: valO },
+                userNumber: userNumberVal,
+                correctAnswer,
+                isCorrect,
+                timestamp: timeStr
+            });
+
+            saveHistoryToStorage();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const total = attemptHistory.length;
+            const correctTotal = attemptHistory.filter(r => r.isCorrect).length;
+            const accuracy = total === 0 ? 0 : Math.round((correctTotal / total) * 100);
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-correct').textContent = correctTotal;
+            document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
+
+            const tbody = document.getElementById('history-table-body');
+            if (total === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="py-8 text-center text-slate-400 text-sm">
+                            尚未有作答紀錄，按下「對答案」後會自動記錄在這裡！
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const reversed = [...attemptHistory].reverse();
+            tbody.innerHTML = reversed.map(rec => {
+                const statusBadge = rec.isCorrect
+                    ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-emerald-100 text-emerald-800">✅ 正確</span>`
+                    : `<div class="flex flex-col items-center gap-0.5">
+                           <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-bold bg-red-100 text-red-700">❌ 錯誤</span>
+                           <span class="text-[11px] text-slate-500">正解：<strong class="math-font text-slate-700">${rec.correctAnswer}</strong></span>
+                       </div>`;
+
+                const userNumberStyle = rec.isCorrect ? 'text-emerald-700' : 'text-red-600';
+
+                return `
+                    <tr class="hover:bg-purple-50/40 transition-colors">
+                        <td class="py-2.5 px-3 sm:px-4 text-center math-font font-bold text-slate-500 text-xs sm:text-sm">
+                            #${rec.attemptId}
+                        </td>
+                        <td class="py-2.5 px-3 sm:px-4">
+                            <div class="math-font font-bold text-slate-800">${rec.questionText}</div>
+                            <div class="text-[11px] text-slate-400">第 ${rec.questionNo} 題 · ${rec.timestamp}</div>
+                        </td>
+                        <td class="py-2.5 px-3 sm:px-4">
+                            <div class="math-font font-extrabold text-base sm:text-lg ${userNumberStyle}">${rec.userNumber}</div>
+                            <div class="text-[11px] text-slate-500">
+                                百:<span class="font-bold text-slate-700">${rec.userDigits.h}</span> / 
+                                十:<span class="font-bold text-slate-700">${rec.userDigits.t}</span> / 
+                                個:<span class="font-bold text-slate-700">${rec.userDigits.o}</span>
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-3 sm:px-4 text-center">
+                            ${statusBadge}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function requestClearHistory() {
+            const btn = document.getElementById('btn-clear-history');
+            if (attemptHistory.length === 0) return;
+
+            if (btn.dataset.confirming === 'true') {
+                attemptHistory = [];
+                saveHistoryToStorage();
+                renderHistory();
+                btn.dataset.confirming = 'false';
+                btn.innerHTML = `<span>🗑️</span><span>清除紀錄</span>`;
+                btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-red-600 bg-white border border-red-200 hover:bg-red-50 active:scale-95 transition-all flex items-center gap-1 shadow-xs';
+                if (confirmClearTimeout) clearTimeout(confirmClearTimeout);
+            } else {
+                btn.dataset.confirming = 'true';
+                btn.innerHTML = `<span>⚠️</span><span>確定清除？</span>`;
+                btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-white bg-red-600 border border-red-600 hover:bg-red-700 active:scale-95 transition-all flex items-center gap-1 shadow-xs';
+                confirmClearTimeout = setTimeout(() => {
+                    btn.dataset.confirming = 'false';
+                    btn.innerHTML = `<span>🗑️</span><span>清除紀錄</span>`;
+                    btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-red-600 bg-white border border-red-200 hover:bg-red-50 active:scale-95 transition-all flex items-center gap-1 shadow-xs';
+                }, 3500);
+            }
+        }
+
+        function exportCSV() {
+            if (attemptHistory.length === 0) {
+                feedbackBox.innerHTML = `
+                    <div class="w-full py-2.5 px-4 rounded-xl bg-amber-50 border border-amber-300 text-amber-800 text-center font-medium text-sm">
+                        ℹ️ 目前沒有作答紀錄可以匯出喔！
+                    </div>
+                `;
+                return;
+            }
+
+            const headers = ['作答次數', '題號', '題目', '使用者輸入數字', '百位', '十位', '個位', '正確答案', '是否正確', '作答時間'];
+            const rows = attemptHistory.map(r => [
+                r.attemptId,
+                `第${r.questionNo}題`,
+                `"${r.questionText}"`,
+                r.userNumber,
+                r.userDigits.h,
+                r.userDigits.t,
+                r.userDigits.o,
+                r.correctAnswer,
+                r.isCorrect ? '正確' : '錯誤',
+                r.timestamp
+            ]);
+
+            const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const dateTag = new Date().toISOString().slice(0, 10);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `三位數減法作答紀錄_${dateTag}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
